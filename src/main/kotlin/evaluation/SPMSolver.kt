@@ -1,6 +1,7 @@
 package evaluation
 
 import paritygame.*
+import sun.util.resources.en.CurrencyNames_en_AU
 
 abstract class SPMSolver {
     fun solve(game : Game) : Partition {
@@ -31,6 +32,12 @@ abstract class SPMSolver {
     }
 
     fun lift(progMeasure : ProgressMeasure, node : Node) : ProgressMeasure {
+        var max : Measure
+        if (node.owner is Diamond) {
+
+        } else {
+
+        }
         return ProgressMeasure()
     }
 
