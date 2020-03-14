@@ -1,12 +1,11 @@
 grammar ParityGame;
-game: ('parity' id=NUMBER)? nodes=node+;
-node: id=NUMBER priority=NUMBER owner=player successors (name=STRING_LITERAL)? ';';
-player: p=(PLAYER0|PLAYER1);
+game: ('parity' id=NUMBER ';')? nodes=node+;
+node: id=NUMBER priority=NUMBER owner=(PLAYER0|PLAYER1) successors (name=STRING_LITERAL)? ';';
 successors: NUMBER (',' NUMBER)*;
 
-NUMBER : [0-9]+;
 PLAYER0 : '0';
 PLAYER1 : '1';
+NUMBER : [0-9]+;
 STRING_LITERAL : '"' (~('"' | '\r' | '\n'))* '"';
 
 // Whitespace
