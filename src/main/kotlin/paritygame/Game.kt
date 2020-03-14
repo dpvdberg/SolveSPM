@@ -1,6 +1,6 @@
 package paritygame
 
 class Game(
-    nodes: List<Node>,
-    id: Int? = null
+    var nodes: List<Node>,
+    var id: Int? = null
 )
