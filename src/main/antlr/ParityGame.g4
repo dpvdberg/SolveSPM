@@ -1,18 +1,12 @@
 grammar ParityGame;
-game:   ('parity' IDENTIFIER)?                          #trueFormula
-    |   'false'                                         #falseFormula
-    |   '(' left=formula op=(OR|AND) right=formula ')'  #orAndFormula
-    |   '<' label=LABEL '>' formula                     #diamondFormula
-    |   '[' label=LABEL ']' formula                     #boxFormula
-    |   'mu' variable=VARIABLE '.' formula              #muFormula
-    |   'nu' variable=VARIABLE '.' formula              #nuFormula
-    |   variable=VARIABLE                               #varFormula
-    ;
-IDENTIFIER : [0-9]*;
-LABEL : [a-z][a-z0-9_]*;
-OR : '||';
-AND : '&&';
+game: ('parity' NUMBER)? node+;
+node: id=NUMBER priority=NUMBER owner=(PLAYER0|PLAYER1) successors (name=STRING_LITERAL)? ';';
+successors: NUMBER (',' NUMBER)*;
 
-// Whitespace and line comments
+NUMBER : [0-9]+;
+PLAYER0 : '0';
+PLAYER1 : '1';
+STRING_LITERAL : '"' (~('"' | '\r' | '\n'))* '"';
+
+// Whitespace
 WS: [ \n\t\r]+ -> skip;
-LINE_COMMENT: '%' ~[\r\n]* -> skip;
