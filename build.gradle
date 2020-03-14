@@ -25,3 +25,8 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
+
+generateGrammarSource {
+    outputDirectory = file('src/main/java/parser/grammar')
+    arguments += ["-visitor", "-package", "parser.grammar"]
+}

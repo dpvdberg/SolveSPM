@@ -1,9 +1,10 @@
 package paritygame
 
 class Node(
-    id: Int,
-    priority : Int,
-    owner: Player,
-    successors: List<Node>,
-    name: String? = null
+    var id: Int,
+    var priority : Int,
+    var owner: Player,
+    var successors: List<Node>,
+    var successorsIds : List<Int>,
+    var name: String? = null
 )

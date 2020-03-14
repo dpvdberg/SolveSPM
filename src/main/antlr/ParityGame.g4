@@ -1,6 +1,7 @@
 grammar ParityGame;
-game: ('parity' NUMBER)? node+;
-node: id=NUMBER priority=NUMBER owner=(PLAYER0|PLAYER1) successors (name=STRING_LITERAL)? ';';
+game: ('parity' id=NUMBER)? nodes=node+;
+node: id=NUMBER priority=NUMBER owner=player successors (name=STRING_LITERAL)? ';';
+player: p=(PLAYER0|PLAYER1);
 successors: NUMBER (',' NUMBER)*;
 
 NUMBER : [0-9]+;
