@@ -7,7 +7,14 @@ import parser.grammar.ParityGameParser
 class GameVisitor : ParityGameBaseVisitor<Any>() {
     override fun visitGame(ctx: ParityGameParser.GameContext?): Game {
         return Game(
-            ctx!!.node().map { n -> this.visit(n) }.toList() as List<Node>, ctx.id?.text?.toInt()
+            // Reverse distinctBy on id, to keep last with that id
+            ctx!!.node()
+                .map { n -> this.visit(n) as Node }
+                .reversed()
+                .distinctBy { n -> n.id }
+                .reversed()
+                .toList(),
+            ctx.id?.text?.toInt()
         )
     }
 
@@ -18,7 +25,7 @@ class GameVisitor : ParityGameBaseVisitor<Any>() {
             this.visit(ctx.player()) as Player,
             emptyList(),
             this.visit(ctx.successors()) as List<Int>,
-            ctx.name?.text
+            ctx.name?.text?.trim('"')
             )
     }
 
@@ -26,11 +33,11 @@ class GameVisitor : ParityGameBaseVisitor<Any>() {
         return when (ctx!!.p.type) {
             ParityGameParser.PLAYER0 -> Diamond
             ParityGameParser.PLAYER1 -> Box
-            else -> throw IllegalStateException("operation not found")
+            else -> throw IllegalStateException("Player type not found")
         }
     }
 
     override fun visitSuccessors(ctx: ParityGameParser.SuccessorsContext?): List<Int> {
-        return ctx!!.NUMBER().map { n -> n.text.toInt() }.toList()
+        return ctx!!.identifier().map { n -> n.text.toInt() }.toList()
     }
 }
