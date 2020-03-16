@@ -5,7 +5,7 @@ import sun.util.resources.en.CurrencyNames_en_AU
 
 abstract class SPMSolver {
     fun solve(game : Game) : Partition {
-        val progressMeasure = computeProgressMeasure(game)
+        val progressMeasure = computeProgressMeasure()
         val winPartitionDiamond = game.nodes.filter { n -> progressMeasure.g[n] !is Loss }.toSet()
         val winPartitionBox = game.nodes.filter { n -> progressMeasure.g[n] is Loss }.toSet()
 
@@ -45,7 +45,7 @@ abstract class SPMSolver {
             val measure = progMeasure.g[to]!!
             prog = measure.copyUpTo(from.priority)
         } else { // priority is odd
-
+            prog = Loss
         }
 
         return prog

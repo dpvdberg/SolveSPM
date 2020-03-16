@@ -32,7 +32,7 @@ sealed class Measure(var length: Int) {
     }
 
     operator fun compareTo(other: Measure): Int {
-        return MeasureUpToComparator.compare(Pair(this, length), Pair(other, other.length))
+        return MeasureUpToComparator.compare(Pair(this, length - 1), Pair(other, other.length - 1))
     }
 }
 
@@ -67,7 +67,7 @@ class TupleComparator {
                 throw Exception("Cannot compare Tuples up to unequal length")
             }
 
-            val differIndex = (0 until o1.second).firstOrNull { i -> o1.first.m[i] != o2.first.m[i]} ?: return 0
+            val differIndex = (0..o1.second).firstOrNull { i -> o1.first.m[i] != o2.first.m[i]} ?: return 0
 
             return 10.0.pow(differIndex).toInt() * (o1.first.m[differIndex] - o2.first.m[differIndex])
         }
