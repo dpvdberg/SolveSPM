@@ -5,47 +5,45 @@ import sun.util.resources.en.CurrencyNames_en_AU
 
 abstract class SPMSolver {
     fun solve(game : Game) : Partition {
-        val progressMeasure = computeProgressMeasure()
+        val progressMeasure = computeProgressMeasure(game.max)
         val winPartitionDiamond = game.nodes.filter { n -> progressMeasure.g[n] !is Loss }.toSet()
         val winPartitionBox = game.nodes.filter { n -> progressMeasure.g[n] is Loss }.toSet()
 
         return Partition(winPartitionDiamond, winPartitionBox)
     }
 
-    private fun computeProgressMeasure() : ProgressMeasure {
+    private fun computeProgressMeasure(max : Tuple) : ProgressMeasure {
         var progMeasure = ProgressMeasure()
-        var lift = lift(progMeasure, getNext())
+        var lift = lift(max, progMeasure, getNext())
         while (progMeasure.smallerUpTo(lift)) {
             progMeasure = lift
 
-            lift = lift(progMeasure, getNext())
+            lift = lift(max, progMeasure, getNext())
         }
         return progMeasure
     }
 
-    private fun lift(progMeasure : ProgressMeasure, node : Node) : ProgressMeasure {
+    private fun lift(max : Tuple, progMeasure : ProgressMeasure, node : Node) : ProgressMeasure {
         val comp : Measure
         if (node.owner is Diamond) {
-            //= node.successors.map { m -> prog(game, progMeasure, node, m) }.minWith(Measure::compareTo)
-            comp = Loss
+            comp = node.successors.map { m -> prog(max, progMeasure, node, m) }.minWith(MeasureComparator)!!
         } else {
-            //= node.successors.map { m -> prog(game, progMeasure, node, m) }.maxWith(Measure::compareTo)
-            comp = Loss
+            comp = node.successors.map { m -> prog(max, progMeasure, node, m) }.maxWith(MeasureComparator)!!
         }
-        //progMeasure.g[node].compareTo(comp)
-        progMeasure.g[node] = Loss
+
+        progMeasure.g[node] = maxOf(comp, progMeasure.g[node]!!, MeasureComparator)
 
         return progMeasure
     }
 
-    private fun prog(progMeasure: ProgressMeasure, from : Node, to : Node) : Measure {
-        var prog : Measure
-        // priority is even
-        if (from.priority % 2 == 0) {
-            val measure = progMeasure.g[to]!!
-            prog = measure.copyUpTo(from.priority)
-        } else { // priority is odd
-            prog = Loss
+    private fun prog(max : Tuple, progMeasure: ProgressMeasure, from : Node, to : Node) : Measure {
+        val prog : Measure
+        val measureTo = progMeasure.g[to]!!
+
+        if (from.isEven()) {
+            prog = measureTo.copyUpTo(from.priority)
+        } else {
+            prog = measureTo.incrementUpTo(from.priority, max)
         }
 
         return prog

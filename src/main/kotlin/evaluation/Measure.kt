@@ -1,7 +1,5 @@
 package evaluation
 
-import javax.xml.soap.Node
-import kotlin.math.abs
 import kotlin.math.pow
 
 sealed class Measure(var length: Int) {
@@ -13,6 +11,17 @@ sealed class Measure(var length: Int) {
                 (0..i).forEach {j -> copy.m[j] = this.m[j]}
 
                 copy
+            }
+        }
+    }
+
+    fun incrementUpTo(i: Int, max : Tuple): Measure {
+        when (this) {
+            is Loss -> return Loss
+            is Tuple -> {
+                val current = this.copyUpTo(i) as Tuple
+
+                return current.incrementUpTo(i, max, current)
             }
         }
     }
@@ -33,6 +42,8 @@ class MeasureComparator {
             return MeasureUpToComparator.compare(Pair(o1, o1.length - 1), Pair(o2, o2.length - 1))
         }
     }
+
+
 }
 
 class MeasureUpToComparator {
@@ -75,6 +86,20 @@ class TupleComparator {
 
 class Tuple(var m : IntArray) : Measure(m.size) {
     constructor(length : Int) : this(IntArray(length) { 0 })
+
+    fun incrementUpTo(i : Int, max : Tuple, current : Tuple) : Measure {
+        if (i == 0 && this.m[0] == max.m[0]) {
+            return Loss
+        }
+
+        if (current.m[i] + 1 > max.m[i]) {
+            current.incrementUpTo(i - 1, max)
+        } else {
+            current.m[i] == current.m[i] + 1
+        }
+
+        return current
+    }
 }
 
 object Loss : Measure(0)
