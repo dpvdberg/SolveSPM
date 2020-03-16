@@ -6,16 +6,10 @@ import sun.util.resources.en.CurrencyNames_en_AU
 abstract class SPMSolver {
     fun solve(game : Game) : Partition {
         val progressMeasure = computeProgressMeasure(game)
-        var winPartition = Partition(mutableSetOf(), mutableSetOf())
-        for (node in game.nodes) {
-            if (progressMeasure.g[node] is Loss) {
-                winPartition.getSet(Diamond).add(node)
-            } else {
-                winPartition.getSet(Box).add(node)
-            }
-        }
+        val winPartitionDiamond = game.nodes.filter { n -> progressMeasure.g[n] !is Loss }.toSet()
+        val winPartitionBox = game.nodes.filter { n -> progressMeasure.g[n] is Loss }.toSet()
 
-        return winPartition
+        return Partition(winPartitionDiamond, winPartitionBox)
     }
 
     fun computeProgressMeasure(game : Game) : ProgressMeasure {

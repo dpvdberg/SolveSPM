@@ -3,13 +3,13 @@ package evaluation
 import javax.xml.soap.Node
 
 sealed class Measure {
-    //TODO: implement
-    fun smallerUpTo(n : Measure) : Boolean {
+    //TODO: implement, <
+    fun smallerUpTo(n : Measure, i : Int) : Boolean {
         return false
     }
 
-    //TODO: implement
-    fun smallerEqualUpTo(n : Measure) : Boolean {
+    //TODO: implement, <=
+    fun smallerEqualUpTo(n : Measure, i : Int) : Boolean {
         return false
     }
 }
