@@ -1,14 +1,16 @@
 package evaluation
 
-import org.junit.jupiter.api.Assertions.*
+import org.junit.Test
 
 internal class MeasureTest {
 
-    @org.junit.jupiter.api.Test
+    @Test
     fun compareTo() {
+        val a = intArrayOf(1, 2, 3)
+        val m1 = Tuple(a)
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     fun testCompareTo() {
     }
 }

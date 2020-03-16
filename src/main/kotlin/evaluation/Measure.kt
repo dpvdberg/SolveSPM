@@ -15,14 +15,13 @@ sealed class Measure(var length: Int) {
     }
 
     fun copyUpTo(i : Int) : Measure {
-        when (this) {
-            is Loss -> return Loss
+        return when (this) {
+            is Loss -> Loss
             is Tuple -> {
                 val copy = Tuple(this.length)
+                (0..i).forEach {j -> copy.m[j] = this.m[j]}
 
-                (0..i).forEach {i -> copy.m[i] = this.m[i]}
-
-                return copy
+                copy
             }
         }
     }
@@ -75,6 +74,8 @@ class TupleComparator {
     }
 }
 
-class Tuple(length : Int, var m : IntArray = IntArray(length) { 0 }) : Measure(length)
+class Tuple(var m : IntArray) : Measure(m.size) {
+    constructor(length : Int) : this(IntArray(length) { 0 })
+}
 
 object Loss : Measure(0)
