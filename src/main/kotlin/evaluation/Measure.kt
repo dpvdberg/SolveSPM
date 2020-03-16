@@ -5,15 +5,6 @@ import kotlin.math.abs
 import kotlin.math.pow
 
 sealed class Measure(var length: Int) {
-    fun smallerUpTo(n: Measure, i: Int): Boolean {
-        return false
-    }
-
-    //TODO: implement, <=
-    fun smallerEqualUpTo(n: Measure, i: Int): Boolean {
-        return false
-    }
-
     fun copyUpTo(i : Int) : Measure {
         return when (this) {
             is Loss -> Loss
