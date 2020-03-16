@@ -12,31 +12,43 @@ abstract class SPMSolver {
         return Partition(winPartitionDiamond, winPartitionBox)
     }
 
-    fun computeProgressMeasure(game : Game) : ProgressMeasure {
+    private fun computeProgressMeasure() : ProgressMeasure {
         var progMeasure = ProgressMeasure()
-        var next = getNext()
-        var lift = lift(progMeasure, next)
+        var lift = lift(progMeasure, getNext())
         while (progMeasure.smallerUpTo(lift)) {
             progMeasure = lift
 
-            next = getNext()
-            lift = lift(progMeasure, next)
+            lift = lift(progMeasure, getNext())
         }
         return progMeasure
     }
 
-    fun lift(progMeasure : ProgressMeasure, node : Node) : ProgressMeasure {
-        var max : Measure
+    private fun lift(progMeasure : ProgressMeasure, node : Node) : ProgressMeasure {
+        val comp : Measure
         if (node.owner is Diamond) {
-
+            //= node.successors.map { m -> prog(game, progMeasure, node, m) }.minWith(Measure::compareTo)
+            comp = Loss
         } else {
-
+            //= node.successors.map { m -> prog(game, progMeasure, node, m) }.maxWith(Measure::compareTo)
+            comp = Loss
         }
-        return ProgressMeasure()
+        //progMeasure.g[node].compareTo(comp)
+        progMeasure.g[node] = Loss
+
+        return progMeasure
     }
 
-    fun prog(progMeasure: ProgressMeasure, n : Node, m : Node) : Measure{
-        return Loss()
+    private fun prog(progMeasure: ProgressMeasure, from : Node, to : Node) : Measure {
+        var prog : Measure
+        // priority is even
+        if (from.priority % 2 == 0) {
+            val measure = progMeasure.g[to]!!
+            prog = measure.copyUpTo(from.priority)
+        } else { // priority is odd
+
+        }
+
+        return prog
     }
 
     abstract fun getNext() : Node

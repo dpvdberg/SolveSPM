@@ -10,8 +10,4 @@ class ProgressMeasure {
     fun smallerUpTo(h : ProgressMeasure) : Boolean {
         return false
     }
-
-    fun max(h : ProgressMeasure) : Boolean {
-        return false
-    }
 }

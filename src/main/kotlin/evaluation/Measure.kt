@@ -14,6 +14,19 @@ sealed class Measure(var length: Int) {
         return false
     }
 
+    fun copyUpTo(i : Int) : Measure {
+        when (this) {
+            is Loss -> return Loss
+            is Tuple -> {
+                val copy = Tuple(this.length)
+
+                (0..i).forEach {i -> copy.m[i] = this.m[i]}
+
+                return copy
+            }
+        }
+    }
+
 
     operator fun compareTo(pair: Pair<Measure, Int>): Int {
         return MeasureUpToComparator.compare(Pair(this, pair.second), pair)
@@ -62,8 +75,6 @@ class TupleComparator {
     }
 }
 
-class Tuple(length : Int) : Measure(length) {
-    var m = IntArray(length) { 0 }
-}
+class Tuple(length : Int, var m : IntArray = IntArray(length) { 0 }) : Measure(length)
 
 object Loss : Measure(0)
