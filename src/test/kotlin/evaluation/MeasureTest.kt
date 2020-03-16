@@ -110,4 +110,16 @@ internal class MeasureTest {
 
         assertEquals(m4, min)
     }
+
+    @Test
+    fun testMinEquals() {
+        val m1 = Tuple(intArrayOf(1, 2, 3, 4, 0, 0))
+        val m2 = Tuple(intArrayOf(1, 2, 3, 4, 4, 6))
+        val m3 = Tuple(intArrayOf(1, 2, 3, 5, 5, 6))
+        val m4 = Tuple(intArrayOf(1, 2, 3, 4, 0, 0))
+
+        val min = listOf(m1, m2, m3, m4).minWith(MeasureComparator)
+
+        assert(m4 == min || m1 == min)
+    }
 }
