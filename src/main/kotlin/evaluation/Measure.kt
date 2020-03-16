@@ -32,7 +32,15 @@ sealed class Measure(var length: Int) {
     }
 
     operator fun compareTo(other: Measure): Int {
-        return MeasureUpToComparator.compare(Pair(this, length - 1), Pair(other, other.length - 1))
+        return MeasureComparator.compare(this, other)
+    }
+}
+
+class MeasureComparator {
+    companion object : Comparator<Measure> {
+        override fun compare(o1: Measure, o2: Measure): Int {
+            return MeasureUpToComparator.compare(Pair(o1, o1.length - 1), Pair(o2, o2.length - 1))
+        }
     }
 }
 

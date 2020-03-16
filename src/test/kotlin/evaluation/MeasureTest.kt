@@ -1,5 +1,6 @@
 package evaluation
 
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Test
 
@@ -84,5 +85,29 @@ internal class MeasureTest {
 
         assertFalse(m1 > m2)
         assertFalse(m1 < m2)
+    }
+
+    @Test
+    fun testMax() {
+        val m1 = Tuple(intArrayOf(1, 2, 3, 4, 5, 6))
+        val m2 = Tuple(intArrayOf(1, 2, 3, 4, 4, 6))
+        val m3 = Tuple(intArrayOf(1, 2, 3, 5, 5, 6))
+        val m4 = Tuple(intArrayOf(1, 2, 3, 4, 0, 0))
+
+        val max = listOf(m1, m2, m3, m4).maxWith(MeasureComparator)
+
+        assertEquals(m3, max)
+    }
+
+    @Test
+    fun testMin() {
+        val m1 = Tuple(intArrayOf(1, 2, 3, 4, 5, 6))
+        val m2 = Tuple(intArrayOf(1, 2, 3, 4, 4, 6))
+        val m3 = Tuple(intArrayOf(1, 2, 3, 5, 5, 6))
+        val m4 = Tuple(intArrayOf(1, 2, 3, 4, 0, 0))
+
+        val min = listOf(m1, m2, m3, m4).minWith(MeasureComparator)
+
+        assertEquals(m4, min)
     }
 }
