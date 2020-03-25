@@ -2,7 +2,7 @@ package evaluation
 
 import kotlin.math.pow
 
-sealed class Measure(var length: Int) {
+sealed class Measure(var length: Int) : Comparable<Measure> {
     fun copyUpTo(i : Int) : Measure {
         return when (this) {
             is Loss -> Loss
@@ -16,12 +16,12 @@ sealed class Measure(var length: Int) {
     }
 
     fun incrementUpTo(i: Int, max : Tuple): Measure {
-        when (this) {
-            is Loss -> return Loss
+        return when (this) {
+            is Loss -> Loss
             is Tuple -> {
                 val current = this.copyUpTo(i) as Tuple
 
-                return current.incrementUpTo(i, max, current)
+                current.incrementUpTo(i, max, current)
             }
         }
     }
@@ -31,7 +31,7 @@ sealed class Measure(var length: Int) {
         return MeasureUpToComparator.compare(Pair(this, pair.second), pair)
     }
 
-    operator fun compareTo(other: Measure): Int {
+    override operator fun compareTo(other: Measure): Int {
         return MeasureComparator.compare(this, other)
     }
 }
@@ -42,8 +42,6 @@ class MeasureComparator {
             return MeasureUpToComparator.compare(Pair(o1, o1.length - 1), Pair(o2, o2.length - 1))
         }
     }
-
-
 }
 
 class MeasureUpToComparator {
@@ -100,6 +98,14 @@ class Tuple(var m : IntArray) : Measure(m.size) {
 
         return current
     }
+
+    override fun toString(): String {
+        return m.contentToString()
+    }
 }
 
-object Loss : Measure(0)
+object Loss : Measure(0) {
+    override fun toString(): String {
+        return "LOSS"
+    }
+}

@@ -94,7 +94,7 @@ internal class MeasureTest {
         val m3 = Tuple(intArrayOf(1, 2, 3, 5, 5, 6))
         val m4 = Tuple(intArrayOf(1, 2, 3, 4, 0, 0))
 
-        val max = listOf(m1, m2, m3, m4).maxWith(MeasureComparator)
+        val max = listOf(m1, m2, m3, m4).max()
 
         assertEquals(m3, max)
     }
@@ -106,7 +106,7 @@ internal class MeasureTest {
         val m3 = Tuple(intArrayOf(1, 2, 3, 5, 5, 6))
         val m4 = Tuple(intArrayOf(1, 2, 3, 4, 0, 0))
 
-        val min = listOf(m1, m2, m3, m4).minWith(MeasureComparator)
+        val min = listOf(m1, m2, m3, m4).min()
 
         assertEquals(m4, min)
     }
@@ -118,7 +118,7 @@ internal class MeasureTest {
         val m3 = Tuple(intArrayOf(1, 2, 3, 5, 5, 6))
         val m4 = Tuple(intArrayOf(1, 2, 3, 4, 0, 0))
 
-        val min = listOf(m1, m2, m3, m4).minWith(MeasureComparator)
+        val min = listOf(m1, m2, m3, m4).min()
 
         assert(m4 == min || m1 == min)
     }

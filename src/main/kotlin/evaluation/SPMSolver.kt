@@ -3,7 +3,7 @@ package evaluation
 import paritygame.*
 
 abstract class SPMSolver {
-    val liftOrder : List<Node> = defineLiftOrder()
+    private val liftOrder : List<Node> = defineLiftOrder()
 
     fun solve(game : Game) : Partition {
         val progressMeasure = computeProgressMeasure(game.max)
@@ -22,6 +22,9 @@ abstract class SPMSolver {
                 .map{ n -> lift(max, progMeasure, n)}
                 .firstOrNull { pm -> progMeasure.less(pm) }
 
+            print(progMeasure)
+            println()
+
             if (next != null) progMeasure = next
         } while (next != null)
 
@@ -31,12 +34,12 @@ abstract class SPMSolver {
     private fun lift(max : Tuple, progMeasure : ProgressMeasure, node : Node) : ProgressMeasure {
         val comp : Measure
         if (node.owner is Diamond) {
-            comp = node.successors.map { m -> prog(max, progMeasure, node, m) }.minWith(MeasureComparator)!!
+            comp = node.successors.map { m -> prog(max, progMeasure, node, m) }.min()!!
         } else {
-            comp = node.successors.map { m -> prog(max, progMeasure, node, m) }.maxWith(MeasureComparator)!!
+            comp = node.successors.map { m -> prog(max, progMeasure, node, m) }.max()!!
         }
 
-        progMeasure.g[node] = maxOf(comp, progMeasure.g[node]!!, MeasureComparator)
+        progMeasure.g[node] = maxOf(comp, progMeasure.g[node]!!)
 
         return progMeasure
     }
