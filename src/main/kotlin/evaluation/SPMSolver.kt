@@ -15,7 +15,7 @@ abstract class SPMSolver {
     private fun computeProgressMeasure(max : Tuple) : ProgressMeasure {
         var progMeasure = ProgressMeasure()
         var lift = lift(max, progMeasure, getNext())
-        while (progMeasure.smallerUpTo(lift)) {
+        while (progMeasure.lessOrEqual(lift)) {
             progMeasure = lift
 
             lift = lift(max, progMeasure, getNext())
