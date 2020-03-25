@@ -10,7 +10,7 @@ import parser.visitor.GameVisitor
 
 class PGSolverParser {
     companion object {
-        fun parse(data: String): Game? {
+        fun parse(data: String): Game {
             val lexer = ParityGameLexer(CharStreams.fromString(data))
             val tokens = CommonTokenStream(lexer)
             val parser = ParityGameParser(tokens)

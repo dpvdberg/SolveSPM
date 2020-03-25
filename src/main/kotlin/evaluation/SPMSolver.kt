@@ -3,18 +3,17 @@ package evaluation
 import paritygame.*
 
 abstract class SPMSolver {
-
     fun solve(game : Game) : Partition {
         val progressMeasure = computeProgressMeasure(game)
-        val winPartitionDiamond = game.nodes.filter { n -> progressMeasure.g[n] !is Loss }.toSet()
-        val winPartitionBox = game.nodes.filter { n -> progressMeasure.g[n] is Loss }.toSet()
+        val winPartitionDiamond = game.nodes.filter { n -> progressMeasure.g.getValue(n) !is Loss }.toSet()
+        val winPartitionBox = game.nodes.filter { n -> progressMeasure.g.getValue(n) is Loss }.toSet()
 
 
         return Partition(winPartitionDiamond, winPartitionBox)
     }
 
     private fun computeProgressMeasure(game : Game) : ProgressMeasure {
-        var progMeasure = ProgressMeasure()
+        var progMeasure = ProgressMeasure(game.maxPriority + 1)
 
         val liftOrder = defineLiftOrder(game.nodes)
 
@@ -40,14 +39,14 @@ abstract class SPMSolver {
             comp = node.successors.map { m -> prog(max, progMeasure, node, m) }.max()!!
         }
 
-        progMeasure.g[node] = maxOf(comp, progMeasure.g[node]!!)
+        progMeasure.g[node] = maxOf(comp, progMeasure.g.getValue(node))
 
         return progMeasure
     }
 
     private fun prog(max : Tuple, progMeasure: ProgressMeasure, from : Node, to : Node) : Measure {
         val prog : Measure
-        val measureTo = progMeasure.g[to]!!
+        val measureTo = progMeasure.g.getValue(to)
 
         if (from.isEven()) {
             prog = measureTo.copyUpTo(from.priority)
