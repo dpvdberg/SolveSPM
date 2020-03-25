@@ -1,25 +1,30 @@
 package evaluation
 
 import paritygame.*
-import sun.util.resources.en.CurrencyNames_en_AU
 
 abstract class SPMSolver {
+    val liftOrder : List<Node> = defineLiftOrder()
+
     fun solve(game : Game) : Partition {
         val progressMeasure = computeProgressMeasure(game.max)
         val winPartitionDiamond = game.nodes.filter { n -> progressMeasure.g[n] !is Loss }.toSet()
         val winPartitionBox = game.nodes.filter { n -> progressMeasure.g[n] is Loss }.toSet()
+
 
         return Partition(winPartitionDiamond, winPartitionBox)
     }
 
     private fun computeProgressMeasure(max : Tuple) : ProgressMeasure {
         var progMeasure = ProgressMeasure()
-        var lift = lift(max, progMeasure, getNext())
-        while (progMeasure.lessOrEqual(lift)) {
-            progMeasure = lift
 
-            lift = lift(max, progMeasure, getNext())
-        }
+        do {
+            val next = liftOrder.asSequence()
+                .map{ n -> lift(max, progMeasure, n)}
+                .firstOrNull { pm -> progMeasure.less(pm) }
+
+            if (next != null) progMeasure = next
+        } while (next != null)
+
         return progMeasure
     }
 
@@ -49,6 +54,5 @@ abstract class SPMSolver {
         return prog
     }
 
-    abstract fun getNext() : Node
-
+    abstract fun defineLiftOrder(): List<Node>
 }
