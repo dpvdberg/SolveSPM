@@ -2,11 +2,10 @@ package evaluation
 
 import paritygame.*
 
-abstract class SPMSolver {
-    val liftOrder : List<Node> = defineLiftOrder()
+abstract class SPMSolver() {
 
     fun solve(game : Game) : Partition {
-        val progressMeasure = computeProgressMeasure(game.max)
+        val progressMeasure = computeProgressMeasure(game)
         val winPartitionDiamond = game.nodes.filter { n -> progressMeasure.g[n] !is Loss }.toSet()
         val winPartitionBox = game.nodes.filter { n -> progressMeasure.g[n] is Loss }.toSet()
 
@@ -14,12 +13,14 @@ abstract class SPMSolver {
         return Partition(winPartitionDiamond, winPartitionBox)
     }
 
-    private fun computeProgressMeasure(max : Tuple) : ProgressMeasure {
+    private fun computeProgressMeasure(game : Game) : ProgressMeasure {
         var progMeasure = ProgressMeasure()
+
+        val liftOrder = defineLiftOrder(game.nodes)
 
         do {
             val next = liftOrder.asSequence()
-                .map{ n -> lift(max, progMeasure, n)}
+                .map{ n -> lift(game.max, progMeasure, n)}
                 .firstOrNull { pm -> progMeasure.less(pm) }
 
             if (next != null) progMeasure = next
@@ -54,5 +55,5 @@ abstract class SPMSolver {
         return prog
     }
 
-    abstract fun defineLiftOrder(): List<Node>
+    abstract fun defineLiftOrder(nodes : List<Node>): List<Node>
 }
