@@ -2,7 +2,7 @@ package evaluation
 
 import paritygame.*
 
-abstract class SPMSolver() {
+abstract class SPMSolver {
 
     fun solve(game : Game) : Partition {
         val progressMeasure = computeProgressMeasure(game)
