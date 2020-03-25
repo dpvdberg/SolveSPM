@@ -8,7 +8,7 @@ internal class InputOrderSolverTest {
     @Test
     fun equal() {
         val rawGame = """
-            0 1 1 0,1 "X";
+            0 1 1 0,2 "X";
             1 2 0 0,3 "Y'";
             2 1 0 3,5 "X'";
             3 2 1 1,6 "Y";

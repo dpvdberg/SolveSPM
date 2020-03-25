@@ -85,15 +85,17 @@ class TupleComparator {
 class Tuple(var m : IntArray) : Measure(m.size) {
     constructor(length : Int) : this(IntArray(length) { 0 })
 
+    constructor(tuple : Tuple) : this(tuple.length) { tuple.m }
+
     fun incrementUpTo(i : Int, max : Tuple, current : Tuple) : Measure {
         if (i == 0 && this.m[0] == max.m[0]) {
             return Loss
         }
 
         if (current.m[i] + 1 > max.m[i]) {
-            current.incrementUpTo(i - 1, max)
+            return current.incrementUpTo(i - 1, max)
         } else {
-            current.m[i] == current.m[i] + 1
+            current.m[i] = current.m[i] + 1
         }
 
         return current

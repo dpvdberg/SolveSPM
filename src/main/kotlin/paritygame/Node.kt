@@ -12,4 +12,8 @@ class Node(
     fun isEven() : Boolean {
         return this.priority % 2 == 0
     }
+
+    override fun toString(): String {
+        return "${id} : ${name}"
+    }
 }

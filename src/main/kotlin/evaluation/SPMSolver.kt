@@ -19,39 +19,38 @@ abstract class SPMSolver {
 
         do {
             val next = liftOrder.asSequence()
-                .map{ n -> lift(game.max, progMeasure, n)}
-                .firstOrNull { pm -> progMeasure.less(pm) }
+                .map{ n -> Pair(n, lift(game.max, progMeasure, n)) }
+                .firstOrNull { pair -> progMeasure.g.getValue(pair.first) < pair.second }
 
             print(progMeasure)
             println()
 
-            if (next != null) progMeasure = next
+            if (next != null) progMeasure.g[next.first] = next.second
         } while (next != null)
 
         return progMeasure
     }
 
-    private fun lift(max : Tuple, progMeasure : ProgressMeasure, node : Node) : ProgressMeasure {
+    private fun lift(max : Tuple, progMeasure : ProgressMeasure, node : Node) : Measure {
         val comp : Measure
-        if (node.owner is Diamond) {
-            comp = node.successors.map { m -> prog(max, progMeasure, node, m) }.min()!!
+
+        comp = if (node.owner is Diamond) {
+            node.successors.map { m -> prog(max, progMeasure, node, m) }.min()!!
         } else {
-            comp = node.successors.map { m -> prog(max, progMeasure, node, m) }.max()!!
+            node.successors.map { m -> prog(max, progMeasure, node, m) }.max()!!
         }
 
-        progMeasure.g[node] = maxOf(comp, progMeasure.g.getValue(node))
-
-        return progMeasure
+        return maxOf(comp, progMeasure.g.getValue(node))
     }
 
     private fun prog(max : Tuple, progMeasure: ProgressMeasure, from : Node, to : Node) : Measure {
         val prog : Measure
         val measureTo = progMeasure.g.getValue(to)
 
-        if (from.isEven()) {
-            prog = measureTo.copyUpTo(from.priority)
+        prog = if (from.isEven()) {
+            measureTo.copyUpTo(from.priority)
         } else {
-            prog = measureTo.incrementUpTo(from.priority, max)
+            measureTo.incrementUpTo(from.priority, max)
         }
 
         return prog
