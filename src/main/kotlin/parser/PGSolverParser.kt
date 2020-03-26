@@ -32,6 +32,10 @@ class PGSolverParser {
                     parityGame.nodes.first { m -> m.id == id }
                 }.toList()
             }
+
+            parityGame.nodes.forEach { n ->
+                n.predecessors = parityGame.nodes.filter { m -> n in m.successors }
+            }
         }
     }
 }

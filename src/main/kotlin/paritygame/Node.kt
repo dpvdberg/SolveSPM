@@ -5,6 +5,7 @@ class Node(
     val priority : Int,
     val owner: Player,
     var successors: List<Node>,
+    var predecessors: List<Node>,
     val successorsIds : List<Int>,
     val name: String? = null
 ) {
