@@ -24,6 +24,7 @@ class GameVisitor : ParityGameBaseVisitor<Any>() {
             ctx.priority.text.toInt(),
             this.visit(ctx.player()) as Player,
             emptyList(),
+            emptyList(),
             this.visit(ctx.successors()) as List<Int>,
             ctx.name?.text?.trim('"')
             )

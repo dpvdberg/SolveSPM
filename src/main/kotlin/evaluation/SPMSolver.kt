@@ -29,7 +29,7 @@ class SPMSolver {
 
                 if (next != null) {
                     progressMeasure.g[next] = lift(game.max, progressMeasure, next)
-                    liftingStrategy.setLifted(next)
+                    liftingStrategy.setLifted(next, progressMeasure)
                 }
                 iteration++
             } while (next != null)
