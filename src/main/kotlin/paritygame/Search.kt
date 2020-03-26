@@ -11,7 +11,6 @@ fun getNodesDFS(node: Node): Sequence<Node> = sequence {
     while (!pending.isEmpty()) {
         val next = pending.pop()
         yield(next)
-        println(next.id)
         next.successors.forEach { n ->
             if (!visited.contains(n)) {
                 visited.add(n)
