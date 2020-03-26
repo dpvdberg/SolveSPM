@@ -1,12 +1,12 @@
 package paritygame
 
 class Node(
-    var id: Int,
-    var priority : Int,
-    var owner: Player,
+    val id: Int,
+    val priority : Int,
+    val owner: Player,
     var successors: List<Node>,
-    var successorsIds : List<Int>,
-    var name: String? = null
+    val successorsIds : List<Int>,
+    val name: String? = null
 ) {
 
     fun isEven() : Boolean {
@@ -14,6 +14,6 @@ class Node(
     }
 
     override fun toString(): String {
-        return "${id} : ${name}"
+        return "$id : $name"
     }
 }

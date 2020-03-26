@@ -21,7 +21,7 @@ internal class PGSolverParserTest {
 
         val game = PGSolverParser.parse(sample)
 
-        assertNotNull(game);
+        assertNotNull(game)
         assert(game is Game)
         assert(game!!.id == 4)
         assert(game.nodes.size == 5)

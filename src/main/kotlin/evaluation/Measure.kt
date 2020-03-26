@@ -2,7 +2,7 @@ package evaluation
 
 import kotlin.math.pow
 
-sealed class Measure(var length: Int) : Comparable<Measure> {
+sealed class Measure(val length: Int) : Comparable<Measure> {
     fun copySubTuple(toIndex : Int) : Measure {
         return when (this) {
             is Loss -> Loss
@@ -82,7 +82,7 @@ class TupleComparator {
     }
 }
 
-class Tuple(var m : IntArray) : Measure(m.size) {
+class Tuple(val m : IntArray) : Measure(m.size) {
     constructor(length : Int) : this(IntArray(length) { 0 })
 
     fun incrementUpTo(i : Int, max : Tuple, current : Tuple) : Measure {

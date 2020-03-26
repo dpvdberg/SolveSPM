@@ -2,7 +2,7 @@ package evaluation
 
 import paritygame.Node
 
-class ProgressMeasure(var length : Int) {
+class ProgressMeasure(val length : Int) {
     val g = mutableMapOf<Node, Measure>()
         .withDefault { Tuple(length) }
 

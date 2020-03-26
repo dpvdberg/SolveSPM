@@ -1,10 +1,13 @@
-package evaluation
+package evaluation.lift.linear
 
-import org.junit.Assert.*
+import evaluation.SPMSolver
+import org.junit.Assert
 import org.junit.Test
+import paritygame.Box
+import paritygame.Diamond
 import parser.PGSolverParser
 
-internal class InputOrderSolverTest {
+internal class IdOrderLiftingTest {
     @Test
     fun equal() {
         val rawGame = """
@@ -19,9 +22,9 @@ internal class InputOrderSolverTest {
 
         val game = PGSolverParser.parse(rawGame)
 
-        val solver = InputOrderSolver()
-        val partition = solver.solve(game)
+        val partition = SPMSolver.solve(game, IdOrderLifting(game))
 
-        assertNotNull(partition)
+        Assert.assertEquals(partition.getSet(Box).size, game.nodes.size)
+        Assert.assertEquals(partition.getSet(Diamond).size, 0)
     }
 }
