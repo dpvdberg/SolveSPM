@@ -28,7 +28,7 @@ fun getEdgesBFS(node: Node): Sequence<Pair<Node, Node>> = sequence {
     pending.add(node)
 
     while (!pending.isEmpty()) {
-        val next = pending.remove()
+        val next = pending.pop()
         next.successors.forEach { n ->
             yield(Pair(next, n))
 
