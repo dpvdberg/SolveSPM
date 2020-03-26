@@ -23,8 +23,4 @@ class OptimizedIdOrderLifting(game : Game) : LinearStrategy(game) {
     override fun fetchNextNode(): Node {
         return linearStrategy.fetchNextNode()
     }
-
-    override fun liftedNode(node: Node) {
-        linearStrategy.liftedNode(node)
-    }
 }

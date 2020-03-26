@@ -1,5 +1,6 @@
 package evaluation.lift.linear
 
+import evaluation.ProgressMeasure
 import evaluation.lift.LiftingStrategy
 import paritygame.Game
 import paritygame.Node
@@ -8,8 +9,6 @@ abstract class LinearStrategy(val game: Game) : LiftingStrategy {
     private var nonLiftedFetchedNodes = 0
 
     abstract fun fetchNextNode(): Node
-
-    abstract fun liftedNode(node: Node)
 
     override fun getNext() : Node? {
         return if (nonLiftedFetchedNodes >= game.nodes.size) {
@@ -23,9 +22,7 @@ abstract class LinearStrategy(val game: Game) : LiftingStrategy {
         }
     }
 
-    override fun setLifted(node : Node) {
+    override fun setLifted(node : Node, pm : ProgressMeasure) {
         nonLiftedFetchedNodes = 0
-
-        liftedNode(node)
     }
 }

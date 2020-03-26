@@ -1,6 +1,6 @@
 package evaluation.lift
 
-import paritygame.Game
+import evaluation.ProgressMeasure
 import paritygame.Node
 
 interface LiftingStrategy {
@@ -10,5 +10,5 @@ interface LiftingStrategy {
 
     fun getNext() : Node?
 
-    fun setLifted(node : Node)
+    fun setLifted(node : Node, pm : ProgressMeasure)
 }

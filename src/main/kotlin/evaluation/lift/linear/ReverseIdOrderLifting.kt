@@ -14,8 +14,4 @@ open class ReverseIdOrderLifting(game : Game) : LinearStrategy(game) {
 
         return node
     }
-
-    override fun liftedNode(node: Node) {
-        // Nothing to do here, we just continue linearly
-    }
 }
