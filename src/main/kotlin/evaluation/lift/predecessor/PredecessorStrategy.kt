@@ -21,7 +21,7 @@ class PredecessorStrategy(val game: Game, private val type : QueueType) : Liftin
 
     override fun setLifted(node: Node, pm: ProgressMeasure) {
         for (w in node.predecessors) {
-            if (!pending.contains(node) && pm.g[w] !is Loss) {
+            if (!pending.contains(w) && pm.g[w] !is Loss) {
                 pending.addToQueue(w, type)
             }
         }
