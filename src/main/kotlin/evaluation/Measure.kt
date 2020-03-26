@@ -3,25 +3,25 @@ package evaluation
 import kotlin.math.pow
 
 sealed class Measure(var length: Int) : Comparable<Measure> {
-    fun copyUpTo(i : Int) : Measure {
+    fun copySubTuple(toIndex : Int) : Measure {
         return when (this) {
             is Loss -> Loss
             is Tuple -> {
                 val copy = Tuple(this.length)
-                (0..i).forEach {j -> copy.m[j] = this.m[j]}
+                (0..toIndex).forEach { j -> copy.m[j] = this.m[j]}
 
                 copy
             }
         }
     }
 
-    fun incrementUpTo(i: Int, max : Tuple): Measure {
+    fun incrementUpTo(currentIndex: Int, max : Tuple): Measure {
         return when (this) {
             is Loss -> Loss
             is Tuple -> {
-                val current = this.copyUpTo(i) as Tuple
+                val current = this.copySubTuple(currentIndex) as Tuple
 
-                current.incrementUpTo(i, max, current)
+                current.incrementUpTo(currentIndex, max, current)
             }
         }
     }
@@ -84,8 +84,6 @@ class TupleComparator {
 
 class Tuple(var m : IntArray) : Measure(m.size) {
     constructor(length : Int) : this(IntArray(length) { 0 })
-
-    constructor(tuple : Tuple) : this(tuple.length) { tuple.m }
 
     fun incrementUpTo(i : Int, max : Tuple, current : Tuple) : Measure {
         if (i == 0 && this.m[0] == max.m[0]) {

@@ -13,22 +13,21 @@ abstract class SPMSolver {
     }
 
     private fun computeProgressMeasure(game : Game) : ProgressMeasure {
-        var progMeasure = ProgressMeasure(game.maxPriority + 1)
+        val progressMeasure = ProgressMeasure(game.maxPriority + 1)
 
-        val liftOrder = defineLiftOrder(game.nodes)
+        val liftOrder = applyLiftingStrategy(game.nodes)
 
         do {
-            val next = liftOrder.asSequence()
-                .map{ n -> Pair(n, lift(game.max, progMeasure, n)) }
-                .firstOrNull { pair -> progMeasure.g.getValue(pair.first) < pair.second }
+            val next = liftOrder
+                .firstOrNull { n -> progressMeasure.g.getValue(n) < lift(game.max, progressMeasure, n) }
 
-            print(progMeasure)
+            print(progressMeasure)
             println()
 
-            if (next != null) progMeasure.g[next.first] = next.second
+            if (next != null) progressMeasure.g[next] = lift(game.max, progressMeasure, next)
         } while (next != null)
 
-        return progMeasure
+        return progressMeasure
     }
 
     private fun lift(max : Tuple, progMeasure : ProgressMeasure, node : Node) : Measure {
@@ -48,7 +47,7 @@ abstract class SPMSolver {
         val measureTo = progMeasure.g.getValue(to)
 
         prog = if (from.isEven()) {
-            measureTo.copyUpTo(from.priority)
+            measureTo.copySubTuple(from.priority)
         } else {
             measureTo.incrementUpTo(from.priority, max)
         }
@@ -56,5 +55,5 @@ abstract class SPMSolver {
         return prog
     }
 
-    abstract fun defineLiftOrder(nodes : List<Node>): List<Node>
+    abstract fun applyLiftingStrategy(nodes : List<Node>): List<Node>
 }
