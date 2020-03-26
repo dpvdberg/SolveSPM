@@ -1,16 +1,9 @@
 package paritygame
 
-import util.QueueType
 import util.SearchMethod
+import util.addToQueue
 import util.toQueueType
 import java.util.*
-
-fun <T> ArrayDeque<T>.addToQueue(element: T, method: QueueType) {
-    when (method) {
-        QueueType.FIFO -> this.add(element)
-        QueueType.LIFO -> this.push(element)
-    }
-}
 
 fun getNodes(node: Node, method: SearchMethod): Sequence<Node> = sequence {
     val pending = ArrayDeque<Node>()
