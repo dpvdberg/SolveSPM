@@ -9,8 +9,8 @@ import util.QueueType
 import util.addToQueue
 import java.util.*
 
-class PredecessorStrategy(val game: Game, val type : QueueType) : LiftingStrategy {
-    val pending = ArrayDeque<Node>(game.nodes)
+class PredecessorStrategy(val game: Game, private val type : QueueType) : LiftingStrategy {
+    private val pending = ArrayDeque(game.nodes)
 
     override fun getNext() : Node? {
         if (pending.isEmpty()) {
@@ -21,7 +21,7 @@ class PredecessorStrategy(val game: Game, val type : QueueType) : LiftingStrateg
 
     override fun setLifted(node: Node, pm: ProgressMeasure) {
         for (w in node.predecessors) {
-            if (!pending.contains(node) && !(pm.g[w] == Loss)) {
+            if (!pending.contains(node) && pm.g[w] !is Loss) {
                 pending.addToQueue(w, type)
             }
         }

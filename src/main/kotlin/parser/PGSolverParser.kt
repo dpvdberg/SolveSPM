@@ -34,7 +34,9 @@ class PGSolverParser {
             }
 
             parityGame.nodes.forEach { n ->
-                n.predecessors = parityGame.nodes.filter { m -> n in m.successors }
+                n.predecessors = parityGame.nodes.filter { m ->
+                    n in m.successors
+                }.toList()
             }
         }
     }
