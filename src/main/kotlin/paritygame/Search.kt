@@ -1,10 +1,19 @@
 package paritygame
 
+import util.SearchMethod
 import java.util.*
 
-fun getNodesDFS(node: Node): Sequence<Node> = sequence {
-    // LIFO Queue
-    val pending: Stack<Node> = Stack()
+fun <T> ArrayDeque<T>.addToQueue(element: T, method: SearchMethod) {
+    when (method) {
+        // FIFO
+        SearchMethod.BFS -> this.add(element)
+        // LIFO
+        SearchMethod.DFS -> this.push(element)
+    }
+}
+
+fun getNodes(node: Node, method: SearchMethod): Sequence<Node> = sequence {
+    val pending = ArrayDeque<Node>()
     val visited: MutableList<Node> = mutableListOf(node)
     pending.add(node)
 
@@ -14,33 +23,14 @@ fun getNodesDFS(node: Node): Sequence<Node> = sequence {
         next.successors.forEach { n ->
             if (!visited.contains(n)) {
                 visited.add(n)
-                pending.add(n)
-            }
-        }
-    }
-}
-
-fun getNodesBFS(node: Node): Sequence<Node> = sequence {
-    // FIFO Queue
-    val pending: Queue<Node> = LinkedList()
-    val visited: MutableList<Node> = mutableListOf(node)
-    pending.add(node)
-
-    while (!pending.isEmpty()) {
-        val next = pending.remove()
-        yield(next)
-        next.successors.forEach { n ->
-            if (!visited.contains(n)) {
-                visited.add(n)
-                pending.add(n)
+                pending.addToQueue(n, method)
             }
         }
     }
 }
 
 fun getEdgesBFS(node: Node): Sequence<Pair<Node, Node>> = sequence {
-    // FIFO Queue
-    val pending: Queue<Node> = LinkedList()
+    val pending = ArrayDeque<Node>()
     val visited: MutableList<Node> = mutableListOf(node)
     pending.add(node)
 
@@ -51,7 +41,7 @@ fun getEdgesBFS(node: Node): Sequence<Pair<Node, Node>> = sequence {
 
             if (!visited.contains(n)) {
                 visited.add(n)
-                pending.add(n)
+                pending.addToQueue(n, SearchMethod.BFS)
             }
         }
     }

@@ -3,6 +3,7 @@ package paritygame
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import parser.PGSolverParser
+import util.SearchMethod
 
 internal class GameTest {
 

@@ -1,6 +1,6 @@
 package evaluation.lift.linear
 
-import SearchMethod
+import util.SearchMethod
 import paritygame.Game
 
 class PermutationIdOrderLifting(game : Game, searchMethod: SearchMethod) : ReverseIdOrderLifting(game) {

@@ -1,8 +1,7 @@
 package paritygame
 
-import SearchMethod
+import util.SearchMethod
 import evaluation.Tuple
-import java.util.*
 
 class Game(
     val nodes: List<Node>,
@@ -21,10 +20,7 @@ class Game(
         count
     }
 
-    fun getNodes(method : SearchMethod, node: Node = startingNode) = when (method) {
-        SearchMethod.DFS -> getNodesDFS(node)
-        SearchMethod.BFS -> getNodesBFS(node)
-    }
+    fun getNodes(method : SearchMethod, node: Node = startingNode) = paritygame.getNodes(node, method)
 
-    fun getEdgesDFS(node: Node = startingNode) = getEdgesBFS(node)
+    fun getEdgesBFS(node: Node = startingNode) = paritygame.getEdgesBFS(node)
 }
