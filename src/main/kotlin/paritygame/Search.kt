@@ -1,14 +1,14 @@
 package paritygame
 
+import util.QueueType
 import util.SearchMethod
+import util.toQueueType
 import java.util.*
 
-fun <T> ArrayDeque<T>.addToQueue(element: T, method: SearchMethod) {
+fun <T> ArrayDeque<T>.addToQueue(element: T, method: QueueType) {
     when (method) {
-        // FIFO
-        SearchMethod.BFS -> this.add(element)
-        // LIFO
-        SearchMethod.DFS -> this.push(element)
+        QueueType.FIFO -> this.add(element)
+        QueueType.LIFO -> this.push(element)
     }
 }
 
@@ -23,7 +23,7 @@ fun getNodes(node: Node, method: SearchMethod): Sequence<Node> = sequence {
         next.successors.forEach { n ->
             if (!visited.contains(n)) {
                 visited.add(n)
-                pending.addToQueue(n, method)
+                pending.addToQueue(n, method.toQueueType())
             }
         }
     }
@@ -41,7 +41,7 @@ fun getEdgesBFS(node: Node): Sequence<Pair<Node, Node>> = sequence {
 
             if (!visited.contains(n)) {
                 visited.add(n)
-                pending.addToQueue(n, SearchMethod.BFS)
+                pending.addToQueue(n, SearchMethod.BFS.toQueueType())
             }
         }
     }
