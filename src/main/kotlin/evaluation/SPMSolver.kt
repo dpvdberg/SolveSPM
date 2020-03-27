@@ -18,7 +18,6 @@ class SPMSolver {
             val winPartitionDiamond = game.nodes.filter { n -> progressMeasure.g.getValue(n) !is Loss }.toSet()
             val winPartitionBox = game.nodes.filter { n -> progressMeasure.g.getValue(n) is Loss }.toSet()
 
-
             return Partition(winPartitionDiamond, winPartitionBox)
         }
 
@@ -26,6 +25,7 @@ class SPMSolver {
             val progressMeasure = ProgressMeasure(game.maxPriority + 1)
 
             var iteration = 0
+
             do {
                 val next = liftingStrategy
                     .getSequence(progressMeasure)
@@ -41,6 +41,8 @@ class SPMSolver {
                 }
                 iteration++
             } while (next != null)
+
+            SolveSPM.benchmarkIterations = iteration
 
             return progressMeasure
         }

@@ -20,7 +20,6 @@ import evaluation.lift.strategyDependencyMap
 import paritygame.Box
 import paritygame.Diamond
 import paritygame.Game
-import paritygame.Partition
 
 fun main(args: Array<String>) = SolveSPM().main(args)
 
@@ -125,9 +124,17 @@ class SolveSPM : CliktCommand(help = "test") {
         help = "Benchmark all lifting strategies, will automatically enable timer"
     ).flag()
 
+    private val benchmarkcsv by option(
+        "-csv",
+        "--commaseparated",
+        help = "Print benchmark results as comma separated file"
+    ).flag()
+
     companion object {
         var verbose = false
         var veryVerbose = false
+
+        var benchmarkIterations = 0
     }
 
     override fun run() {
@@ -183,6 +190,9 @@ class SolveSPM : CliktCommand(help = "test") {
 
     fun benchmark(game: Game) {
         val factory = LiftingStrategyFactory()
+        if (benchmarkcsv) {
+            println("Method,ElapsedNs,Iterations,Diamond,Box")
+        }
         for (method in StrategyName.values()) {
             if (method in strategyDependencyMap) {
                 val dependencies = strategyDependencyMap[method]
@@ -226,14 +236,22 @@ class SolveSPM : CliktCommand(help = "test") {
             queueType,
             minMax
         )
+        benchmarkIterations = 0
+
         val (partition, elapsedNs) = SPMSolver.solveTimed(game, liftingStrategy)
-        println(
-            """
-            Method: $liftingStrategyName ${searchMethod ?: ""}${queueType ?: ""}${minMax ?: ""}
+        val fullName = "$liftingStrategyName ${searchMethod ?: ""}${queueType ?: ""}${minMax ?: ""}".trim()
+
+        if (benchmarkcsv) {
+            println("$fullName,$elapsedNs,$benchmarkIterations,${partition.getSet(Diamond).size},${partition.getSet(Box).size}")
+        } else {
+            println(
+                """
+            Method: $fullName
             Partition: (diamond, box) = (${partition.getSet(Diamond).size}, ${partition.getSet(Box).size})
-            Execution time: ${toHMSandMs(elapsedNs)}
+            Execution time: ${toHMSandMs(elapsedNs)}    Iterations: $benchmarkIterations
             
             """.trimIndent()
-        )
+            )
+        }
     }
 }
