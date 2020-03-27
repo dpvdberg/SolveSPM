@@ -4,7 +4,6 @@ import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.clikt.parameters.types.file
-import parser.PGSolverParser
 import com.andreapivetta.kolor.*
 import com.github.ajalt.clikt.core.context
 import com.github.ajalt.clikt.parameters.options.default
@@ -20,6 +19,7 @@ import evaluation.lift.strategyDependencyMap
 import paritygame.Box
 import paritygame.Diamond
 import paritygame.Game
+import parser.PGSolverParserNames
 import java.io.File
 
 fun main(args: Array<String>) = SolveSPM().main(args)
@@ -108,7 +108,7 @@ class SolveSPM : CliktCommand(help = "test") {
     ).choice(
         QueueType.values().associateBy { m -> m.name },
         ignoreCase = true
-    ).default(QueueType.FIFO)
+    ).default(QueueType.LIFO)
 
     private val minMax by option(
         "-mm", "--metricmethod",
@@ -142,6 +142,11 @@ class SolveSPM : CliktCommand(help = "test") {
         help = "Write benchmark results for each parity game as a comma separated file"
     ).flag()
 
+    private val pgParserName by option("-p", "--parser", help = "PGSolver parser").choice(
+        PGSolverParserNames.values().associateBy { m -> m.name },
+        ignoreCase = true
+    ).default(PGSolverParserNames.SIMPLE)
+
     companion object {
         var verbose = false
         var veryVerbose = false
@@ -171,7 +176,7 @@ class SolveSPM : CliktCommand(help = "test") {
 
     private fun solveFile(file: File) {
         println("Reading parity game file: ${file.name}")
-        val game = PGSolverParser.parse(file.readText())
+        val game = pgParserName.parser.parse(file.readText())
 
         println("Successfully parsed parity game file.")
         printlnv(game)
