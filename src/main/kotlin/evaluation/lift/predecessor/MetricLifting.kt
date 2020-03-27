@@ -7,7 +7,7 @@ import paritygame.Game
 import paritygame.Node
 import util.MinMax
 
-class MetricLifting(val game: Game, val metric : MinMax) : PredecessorStrategy() {
+class MetricLifting(val game: Game, private val metric : MinMax) : PredecessorStrategy() {
     private val pending = game.nodes.toMutableSet()
 
     private fun nodeValue(node : Node, pm : ProgressMeasure) : Measure {
