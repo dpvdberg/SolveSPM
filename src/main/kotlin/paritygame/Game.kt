@@ -20,9 +20,26 @@ class Game(
         count
     }
 
-    fun getNodes(method : SearchMethod, node: Node = startingNode) = paritygame.getNodes(node, method)
+    fun getNodes(method : SearchMethod): List<Node> {
+        val remainingNodes = nodes.sortedBy { n -> n.id }.toMutableList()
+        val orderedNodes = mutableListOf<Node>()
+        while (remainingNodes.isNotEmpty()) {
+            orderedNodes += paritygame.searchNodes(remainingNodes.first(), method)
+            orderedNodes.forEach {n -> remainingNodes.remove(n)}
+        }
 
-    fun getEdgesBFS(node: Node = startingNode) = paritygame.getEdgesBFS(node)
+        return orderedNodes.toList()
+    }
+
+    fun getEdgesBFS(): List<Pair<Node, Node>> {
+        val remainingNodes = nodes.sortedBy { n -> n.id }.toMutableList()
+        val orderedEdges = mutableListOf<Pair<Node, Node>>()
+        while (remainingNodes.isNotEmpty()) {
+            orderedEdges += paritygame.searchEdgesBFS(remainingNodes.first())
+            orderedEdges.forEach {(a, b) -> remainingNodes.remove(a)}
+        }
+        return orderedEdges.toList()
+    }
 
     override fun toString() =
         """

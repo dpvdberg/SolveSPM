@@ -5,7 +5,7 @@ import util.addToQueue
 import util.toQueueType
 import java.util.*
 
-fun getNodes(node: Node, method: SearchMethod): Sequence<Node> = sequence {
+fun searchNodes(node: Node, method: SearchMethod): Sequence<Node> = sequence {
     val pending = ArrayDeque<Node>()
     val visited: MutableList<Node> = mutableListOf(node)
     pending.add(node)
@@ -22,7 +22,7 @@ fun getNodes(node: Node, method: SearchMethod): Sequence<Node> = sequence {
     }
 }
 
-fun getEdgesBFS(node: Node): Sequence<Pair<Node, Node>> = sequence {
+fun searchEdgesBFS(node: Node): Sequence<Pair<Node, Node>> = sequence {
     val pending = ArrayDeque<Node>()
     val visited: MutableList<Node> = mutableListOf(node)
     pending.add(node)
