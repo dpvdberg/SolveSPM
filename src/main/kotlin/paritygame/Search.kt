@@ -11,7 +11,7 @@ fun getNodes(node: Node, method: SearchMethod): Sequence<Node> = sequence {
     pending.add(node)
 
     while (!pending.isEmpty()) {
-        val next = pending.pop()
+        val next = pending.remove()
         yield(next)
         next.successors.forEach { n ->
             if (!visited.contains(n)) {
@@ -28,7 +28,7 @@ fun getEdgesBFS(node: Node): Sequence<Pair<Node, Node>> = sequence {
     pending.add(node)
 
     while (!pending.isEmpty()) {
-        val next = pending.pop()
+        val next = pending.remove()
         next.successors.forEach { n ->
             yield(Pair(next, n))
 

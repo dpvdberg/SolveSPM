@@ -7,7 +7,6 @@ import paritygame.Box
 import paritygame.Diamond
 import parser.PGSolverParser
 import util.QueueType
-import java.util.*
 
 internal class PredecessorStrategyTest {
     @Test
@@ -24,8 +23,8 @@ internal class PredecessorStrategyTest {
 
         val game = PGSolverParser.parse(rawGame)
 
-        val partitionFIFO = SPMSolver.solve(game, PredecessorStrategy(game, QueueType.FIFO))
-        val partitionLIFO = SPMSolver.solve(game, PredecessorStrategy(game, QueueType.LIFO))
+        val partitionFIFO = SPMSolver.solve(game, PredecessorLifting(game, QueueType.FIFO))
+        val partitionLIFO = SPMSolver.solve(game, PredecessorLifting(game, QueueType.LIFO))
 
         //Assert.assertEquals(partitionFIFO.getSet(Box).size, game.nodes.size)
         Assert.assertEquals(partitionLIFO.getSet(Box).size, game.nodes.size)

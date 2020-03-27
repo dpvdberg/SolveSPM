@@ -3,27 +3,26 @@ package evaluation.lift.predecessor
 import evaluation.Loss
 import evaluation.ProgressMeasure
 import evaluation.lift.LiftingStrategy
-import paritygame.Game
 import paritygame.Node
-import util.QueueType
-import util.addToQueue
-import java.util.*
 
-class PredecessorStrategy(val game: Game, private val type : QueueType) : LiftingStrategy {
-    private val pending = ArrayDeque(game.nodes)
-
+abstract class PredecessorStrategy : LiftingStrategy {
     override fun getNext() : Node? {
-        if (pending.isEmpty()) {
+        if (emptyPending()) {
             return null
         }
-        return pending.pop()
+        return removePending()
     }
 
     override fun setLifted(node: Node, pm: ProgressMeasure) {
         for (w in node.predecessors) {
-            if (!pending.contains(w) && pm.g[w] !is Loss) {
-                pending.addToQueue(w, type)
+            if (!isPending(w) && pm.g[w] !is Loss) {
+                addPendingNode(w)
             }
         }
     }
+
+    abstract fun addPendingNode(node : Node)
+    abstract fun isPending(node : Node) : Boolean
+    abstract fun removePending() : Node
+    abstract fun emptyPending() : Boolean
 }
