@@ -25,25 +25,25 @@ fun main(args: Array<String>) = SolveSPM().main(args)
 
 fun printlnv(message: Any?) {
     if (SolveSPM.verbose) {
-        println("$message".lightYellow())
+        println("$message".yellow())
     }
 }
 
 fun printv(message: Any?) {
     if (SolveSPM.verbose) {
-        print("$message".lightYellow())
+        print("$message".yellow())
     }
 }
 
 fun printlnvv(message: Any?) {
     if (SolveSPM.veryVerbose) {
-        println("$message".lightCyan())
+        println("$message".cyan())
     }
 }
 
 fun printvv(message: Any?) {
     if (SolveSPM.veryVerbose) {
-        print("$message".lightCyan())
+        print("$message".cyan())
     }
 }
 
