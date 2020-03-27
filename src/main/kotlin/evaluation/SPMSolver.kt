@@ -20,7 +20,7 @@ class SPMSolver {
             var iteration = 0
             do {
                 val next = liftingStrategy
-                    .getSequence()
+                    .getSequence(progressMeasure)
                     .firstOrNull { n -> progressMeasure.g.getValue(n) < lift(game.max, progressMeasure, n) }
 
                 println("Iteration: $iteration")

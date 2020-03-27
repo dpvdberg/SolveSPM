@@ -3,19 +3,19 @@ package evaluation
 import kotlin.math.pow
 
 sealed class Measure(val length: Int) : Comparable<Measure> {
-    fun copySubTuple(toIndex : Int) : Measure {
+    fun copySubTuple(toIndex: Int): Measure {
         return when (this) {
             is Loss -> Loss
             is Tuple -> {
                 val copy = Tuple(this.length)
-                (0..toIndex).forEach { j -> copy.m[j] = this.m[j]}
+                (0..toIndex).forEach { j -> copy.m[j] = this.m[j] }
 
                 copy
             }
         }
     }
 
-    fun incrementUpTo(currentIndex: Int, max : Tuple): Measure {
+    fun incrementUpTo(currentIndex: Int, max: Tuple): Measure {
         return when (this) {
             is Loss -> Loss
             is Tuple -> {
@@ -33,6 +33,25 @@ sealed class Measure(val length: Int) : Comparable<Measure> {
 
     override operator fun compareTo(other: Measure): Int {
         return MeasureComparator.compare(this, other)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Measure) return false
+
+        return when (this) {
+            is Loss ->
+                when (other) {
+                    is Loss -> true
+                    is Tuple -> false
+                }
+            is Tuple ->
+                when (other) {
+                    is Loss -> false
+                    is Tuple ->
+                        return this.m.contentEquals(other.m)
+                }
+        }
     }
 }
 
@@ -65,7 +84,7 @@ class MeasureUpToComparator {
 }
 
 class TupleComparator {
-    companion object : Comparator<Pair<Tuple, Int>>  {
+    companion object : Comparator<Pair<Tuple, Int>> {
         override fun compare(o1: Pair<Tuple, Int>, o2: Pair<Tuple, Int>): Int {
             if (o1.first.length != o2.first.length) {
                 throw Exception("Cannot compare Tuples of unequal size")
@@ -75,17 +94,17 @@ class TupleComparator {
                 throw Exception("Cannot compare Tuples up to unequal length")
             }
 
-            val differIndex = (0..o1.second).firstOrNull { i -> o1.first.m[i] != o2.first.m[i]} ?: return 0
+            val differIndex = (0..o1.second).firstOrNull { i -> o1.first.m[i] != o2.first.m[i] } ?: return 0
 
             return 10.0.pow(differIndex).toInt() * (o1.first.m[differIndex] - o2.first.m[differIndex])
         }
     }
 }
 
-class Tuple(val m : IntArray) : Measure(m.size) {
-    constructor(length : Int) : this(IntArray(length) { 0 })
+class Tuple(val m: IntArray) : Measure(m.size) {
+    constructor(length: Int) : this(IntArray(length) { 0 })
 
-    fun incrementUpTo(i : Int, max : Tuple, current : Tuple) : Measure {
+    fun incrementUpTo(i: Int, max: Tuple, current: Tuple): Measure {
         if (i == 0 && this.m[0] == max.m[0]) {
             return Loss
         }

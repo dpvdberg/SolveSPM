@@ -10,7 +10,7 @@ abstract class LinearStrategy(val game: Game) : LiftingStrategy {
 
     abstract fun fetchNextNode(): Node
 
-    override fun getNext() : Node? {
+    override fun getNext(pm : ProgressMeasure) : Node? {
         return if (nonLiftedFetchedNodes >= game.nodes.size) {
             /* All nodes fetched but non are lifted, we are done */
             null

@@ -4,11 +4,11 @@ import evaluation.ProgressMeasure
 import paritygame.Node
 
 interface LiftingStrategy {
-    fun getSequence() = generateSequence {
-        (getNext()).takeIf { it != null }
+    fun getSequence(pm: ProgressMeasure) = generateSequence {
+        (getNext(pm)).takeIf { it != null }
     }
 
-    fun getNext() : Node?
+    fun getNext(pm : ProgressMeasure) : Node?
 
     fun setLifted(node : Node, pm : ProgressMeasure)
 }

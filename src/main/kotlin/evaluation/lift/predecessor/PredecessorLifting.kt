@@ -18,7 +18,7 @@ class PredecessorLifting(game: Game, private val type : QueueType) : Predecessor
 
     override fun isPending(node: Node): Boolean = pending.contains(node)
 
-    override fun removePending(): Node = pending.remove()
+    override fun removePending(pm : ProgressMeasure): Node = pending.remove()
 
     override fun emptyPending(): Boolean = pending.isEmpty()
 }

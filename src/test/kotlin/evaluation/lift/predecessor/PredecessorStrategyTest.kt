@@ -26,7 +26,7 @@ internal class PredecessorStrategyTest {
         val partitionFIFO = SPMSolver.solve(game, PredecessorLifting(game, QueueType.FIFO))
         val partitionLIFO = SPMSolver.solve(game, PredecessorLifting(game, QueueType.LIFO))
 
-        //Assert.assertEquals(partitionFIFO.getSet(Box).size, game.nodes.size)
+        Assert.assertEquals(partitionFIFO.getSet(Box).size, game.nodes.size)
         Assert.assertEquals(partitionLIFO.getSet(Box).size, game.nodes.size)
         Assert.assertEquals(partitionFIFO.getSet(Diamond).size, 0)
         Assert.assertEquals(partitionLIFO.getSet(Diamond).size, 0)
