@@ -1,10 +1,7 @@
 package evaluation
 
 import evaluation.lift.LiftingStrategy
-import evaluation.lift.linear.IdOrderLifting
-import evaluation.lift.linear.OptimizedIdOrderLifting
-import evaluation.lift.linear.PermutationIdOrderLifting
-import evaluation.lift.linear.ReverseIdOrderLifting
+import evaluation.lift.linear.*
 import evaluation.lift.predecessor.MetricLifting
 import evaluation.lift.predecessor.PredecessorLifting
 import org.junit.Assert
@@ -32,7 +29,8 @@ internal class ParityGameTests {
             PredecessorLifting(game, QueueType.FIFO),
             PredecessorLifting(game, QueueType.LIFO),
             MetricLifting(game, MinMax.MIN),
-            MetricLifting(game, MinMax.MAX)
+            MetricLifting(game, MinMax.MAX),
+            RandomOrderLifting(game, 0)
         )
     }
 
