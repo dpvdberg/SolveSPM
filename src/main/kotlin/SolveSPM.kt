@@ -20,6 +20,7 @@ import evaluation.lift.strategyDependencyMap
 import paritygame.Box
 import paritygame.Diamond
 import paritygame.Game
+import java.io.File
 
 fun main(args: Array<String>) = SolveSPM().main(args)
 
@@ -60,6 +61,8 @@ fun toHMSandMs(ns: Long): String {
 }
 
 class SolveSPM : CliktCommand(help = "test") {
+    private val extension = ".gm"
+
     init {
         context { helpFormatter = CliktHelpFormatter(showRequiredTag = true, showDefaultValues = true) }
     }
@@ -69,10 +72,13 @@ class SolveSPM : CliktCommand(help = "test") {
         ignoreCase = true
     ).default(StrategyName.METRIC)
 
-    private val pgFile by argument("Path", help = "The path to the parity game file in PGSolver format").file(
+    private val pgFile by argument(
+        "Path",
+        help = "A path to a parity game file in PGSolver format or a directory containing parity game files (with extension ${extension})"
+    ).file(
         mustExist = true,
         mustBeReadable = true,
-        canBeDir = false,
+        canBeDir = true,
         canBeFile = true
     )
 
@@ -121,13 +127,19 @@ class SolveSPM : CliktCommand(help = "test") {
     private val benchmark by option(
         "-b",
         "--benchmark",
-        help = "Benchmark all lifting strategies, will automatically enable timer"
+        help = "Benchmark all lifting strategies for each parity game, will automatically use timer"
     ).flag()
 
-    private val benchmarkcsv by option(
+    private val printcsv by option(
         "-csv",
         "--commaseparated",
-        help = "Print benchmark results as comma separated file"
+        help = "Print benchmark results for each parity game in comma separated format"
+    ).flag()
+
+    private val writecsv by option(
+        "-o",
+        "--output",
+        help = "Write benchmark results for each parity game as a comma separated file"
     ).flag()
 
     companion object {
@@ -141,8 +153,25 @@ class SolveSPM : CliktCommand(help = "test") {
         SolveSPM.verbose = verbose || veryVerbose
         SolveSPM.veryVerbose = veryVerbose
 
-        println("Reading parity game file...")
-        val game = PGSolverParser.parse(pgFile.readText())
+        if (!benchmark && (writecsv ||  printcsv)) {
+            println("The write and print csv flags only apply for benchmarks".red())
+            return
+        }
+
+        val files = mutableListOf<File>()
+        if (pgFile.isFile) {
+            files += pgFile
+        } else if (pgFile.isDirectory) {
+            files += pgFile
+                .listFiles { _, fileName -> fileName.toLowerCase().endsWith(extension) }!!
+        }
+
+        files.forEach { f -> solveFile(f) }
+    }
+
+    private fun solveFile(file: File) {
+        println("Reading parity game file: ${file.name}")
+        val game = PGSolverParser.parse(file.readText())
 
         println("Successfully parsed parity game file.")
         printlnv(game)
@@ -153,7 +182,7 @@ class SolveSPM : CliktCommand(help = "test") {
         if (benchmark) {
             printlnv("Starting benchmark")
 
-            benchmark(game)
+            benchmark(game, file)
             return
         }
 
@@ -186,12 +215,14 @@ class SolveSPM : CliktCommand(help = "test") {
         println("SPMSolver finished.")
 
         println(partition)
+        println()
     }
 
-    fun benchmark(game: Game) {
+    private fun benchmark(game: Game, file: File) {
         val factory = LiftingStrategyFactory()
-        if (benchmarkcsv) {
-            println("Method,ElapsedNs,Iterations,Diamond,Box")
+        val lines = StringBuilder("Method,ElapsedNs,Iterations,Diamond,Box")
+        if (printcsv) {
+            println(lines)
         }
         for (method in StrategyName.values()) {
             if (method in strategyDependencyMap) {
@@ -201,23 +232,27 @@ class SolveSPM : CliktCommand(help = "test") {
                 when (dependencies?.get(0)) {
                     is MinMax -> {
                         dependencies.forEach { z ->
-                            benchmarkSingle(factory, game, method, null, null, z as MinMax)
+                            lines.appendln(benchmarkSingle(factory, game, method, null, null, z as MinMax))
                         }
                     }
                     is QueueType -> {
                         dependencies.forEach { z ->
-                            benchmarkSingle(factory, game, method, null, z as QueueType, null)
+                            lines.appendln(benchmarkSingle(factory, game, method, null, z as QueueType, null))
                         }
                     }
                     is SearchMethod -> {
                         dependencies.forEach { z ->
-                            benchmarkSingle(factory, game, method, z as SearchMethod, null, null)
+                            lines.appendln(benchmarkSingle(factory, game, method, z as SearchMethod, null, null))
                         }
                     }
                 }
             } else {
-                benchmarkSingle(factory, game, method, null, null, null)
+                lines.appendln(benchmarkSingle(factory, game, method, null, null, null))
             }
+        }
+
+        if (writecsv) {
+            File(file.parentFile, "${file.nameWithoutExtension}_result.csv").writeText(lines.toString())
         }
     }
 
@@ -228,7 +263,7 @@ class SolveSPM : CliktCommand(help = "test") {
         searchMethod: SearchMethod?,
         queueType: QueueType?,
         minMax: MinMax?
-    ) {
+    ): String {
         val liftingStrategy = factory.createLiftingStrategy(
             liftingStrategyName,
             game,
@@ -241,8 +276,10 @@ class SolveSPM : CliktCommand(help = "test") {
         val (partition, elapsedNs) = SPMSolver.solveTimed(game, liftingStrategy)
         val fullName = "$liftingStrategyName ${searchMethod ?: ""}${queueType ?: ""}${minMax ?: ""}".trim()
 
-        if (benchmarkcsv) {
-            println("$fullName,$elapsedNs,$benchmarkIterations,${partition.getSet(Diamond).size},${partition.getSet(Box).size}")
+        val csvline =
+            "$fullName,$elapsedNs,$benchmarkIterations,${partition.getSet(Diamond).size},${partition.getSet(Box).size}"
+        if (printcsv) {
+            println(csvline)
         } else {
             println(
                 """
@@ -253,5 +290,7 @@ class SolveSPM : CliktCommand(help = "test") {
             """.trimIndent()
             )
         }
+
+        return csvline
     }
 }
