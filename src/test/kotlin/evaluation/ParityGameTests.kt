@@ -84,5 +84,26 @@ internal class ParityGameTests {
         }
     }
 
+    @Test
+    fun equal2() {
+        val rawGame = """
+            0 0 0 1,2;
+            1 1 1 1;
+            2 2 1 2;
+        """.trimIndent()
+
+        val game = PGSolverParser.parse(rawGame)
+
+        val strategies = getStrategies(game)
+
+        for (strategy in strategies) {
+            val partition = SPMSolver.solve(game, strategy)
+
+
+            assertEquals(partition.getSet(Box).size, 1)
+            assertEquals(partition.getSet(Diamond).size, 2)
+        }
+    }
+
 
 }
