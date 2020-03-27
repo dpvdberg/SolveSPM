@@ -15,6 +15,6 @@ class Node(
     }
 
     override fun toString(): String {
-        return "$id : $name"
+        return "id: $id ${name ?: ""} \t\t owner: $owner \t prio: $priority \t successors: $successorsIds"
     }
 }

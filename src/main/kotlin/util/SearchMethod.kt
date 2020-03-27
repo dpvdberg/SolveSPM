@@ -1,7 +1,8 @@
 package util
 
 enum class SearchMethod {
-    DFS, BFS
+    DFS,
+    BFS
 }
 
 fun SearchMethod.toQueueType(): QueueType {

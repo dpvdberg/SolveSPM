@@ -2,9 +2,17 @@ package evaluation
 
 import evaluation.lift.LiftingStrategy
 import paritygame.*
+import printlnv
+import printlnvv
 
 class SPMSolver {
     companion object {
+        fun solveTimed(game : Game, liftingStrategy: LiftingStrategy) : Pair<Partition, Long> {
+            val start = System.nanoTime()
+            val result = solve(game, liftingStrategy)
+            return Pair(result, System.nanoTime() - start)
+        }
+
         fun solve(game: Game, liftingStrategy: LiftingStrategy): Partition {
             val progressMeasure = computeProgressMeasure(game, liftingStrategy)
             val winPartitionDiamond = game.nodes.filter { n -> progressMeasure.g.getValue(n) !is Loss }.toSet()
@@ -23,9 +31,9 @@ class SPMSolver {
                     .getSequence(progressMeasure)
                     .firstOrNull { n -> progressMeasure.g.getValue(n) < lift(game.max, progressMeasure, n) }
 
-                println("Iteration: $iteration")
-                print(progressMeasure)
-                println()
+                printlnv("Iteration: $iteration")
+                printlnvv(progressMeasure)
+                printlnvv("")
 
                 if (next != null) {
                     progressMeasure.g[next] = lift(game.max, progressMeasure, next)

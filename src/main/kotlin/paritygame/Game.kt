@@ -23,4 +23,13 @@ class Game(
     fun getNodes(method : SearchMethod, node: Node = startingNode) = paritygame.getNodes(node, method)
 
     fun getEdgesBFS(node: Node = startingNode) = paritygame.getEdgesBFS(node)
+
+    override fun toString() =
+        """
+            Game id: $id
+            Number of nodes: ${nodes.size}
+            
+            Starting node: $startingNode
+            Maximum priority: $maxPriority
+        """.trimIndent()
 }
