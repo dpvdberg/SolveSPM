@@ -5,6 +5,7 @@ import org.junit.Assert
 import org.junit.Test
 import paritygame.Box
 import paritygame.Diamond
+import parser.GrammarPGSolverParser
 import parser.PGSolverParser
 import util.MinMax
 
@@ -21,7 +22,7 @@ internal class MetricLiftingTest {
             6 3 0 6,5 "W";
         """.trimIndent()
 
-        val game = PGSolverParser.parse(rawGame)
+        val game = GrammarPGSolverParser().parse(rawGame)
 
         val partitionMin = SPMSolver.solve(game, MetricLifting(game, MinMax.MIN))
         val partitionMax = SPMSolver.solve(game, MetricLifting(game, MinMax.MIN))

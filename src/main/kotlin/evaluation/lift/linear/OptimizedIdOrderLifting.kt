@@ -6,10 +6,10 @@ import paritygame.Node
 class OptimizedIdOrderLifting(game : Game) : LinearStrategy(game) {
     private val linearStrategy : LinearStrategy
     init {
-        val increasingEdges = game.getEdgesBFS().count {
+        val increasingEdges = game.getEdges().count {
             (a, b) -> a.id < b.id
         }
-        val decreasingEdges = game.getEdgesBFS().count {
+        val decreasingEdges = game.getEdges().count {
             (a, b) -> a.id > b.id
         }
 

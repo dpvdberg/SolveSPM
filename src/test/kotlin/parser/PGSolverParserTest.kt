@@ -19,7 +19,7 @@ internal class PGSolverParserTest {
             2 7 0 3,1,0,4;
             """
 
-        val game = PGSolverParser.parse(sample)
+        val game = GrammarPGSolverParser().parse(sample)
 
         assertNotNull(game)
         assert(game is Game)
@@ -53,7 +53,7 @@ internal class PGSolverParserTest {
             2 7 0 3,1,0,4;
             """
 
-        val game = PGSolverParser.parse(sample)
+        val game = GrammarPGSolverParser().parse(sample)
 
         assertNotNull(game);
         assert(game is Game)

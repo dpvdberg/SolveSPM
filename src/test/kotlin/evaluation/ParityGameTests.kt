@@ -11,6 +11,7 @@ import org.junit.Test
 import paritygame.Box
 import paritygame.Diamond
 import paritygame.Game
+import parser.GrammarPGSolverParser
 import parser.PGSolverParser
 import util.MinMax
 import util.QueueType
@@ -47,7 +48,7 @@ internal class ParityGameTests {
             7 4 0 6,0 ;
         """.trimIndent()
 
-        val game = PGSolverParser.parse(rawGame)
+        val game = GrammarPGSolverParser().parse(rawGame)
 
         val strategies = getStrategies(game)
 
@@ -69,7 +70,7 @@ internal class ParityGameTests {
             4 0 0 1;
         """.trimIndent()
 
-        val game = PGSolverParser.parse(rawGame)
+        val game = GrammarPGSolverParser().parse(rawGame)
 
         val strategies = getStrategies(game)
 
@@ -90,7 +91,7 @@ internal class ParityGameTests {
             2 2 1 2;
         """.trimIndent()
 
-        val game = PGSolverParser.parse(rawGame)
+        val game = GrammarPGSolverParser().parse(rawGame)
 
         val strategies = getStrategies(game)
 

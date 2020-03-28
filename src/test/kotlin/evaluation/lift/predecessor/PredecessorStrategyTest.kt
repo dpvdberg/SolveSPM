@@ -5,6 +5,7 @@ import org.junit.Assert
 import org.junit.Test
 import paritygame.Box
 import paritygame.Diamond
+import parser.GrammarPGSolverParser
 import parser.PGSolverParser
 import util.QueueType
 
@@ -21,7 +22,7 @@ internal class PredecessorStrategyTest {
             6 3 0 6,5 "W";
         """.trimIndent()
 
-        val game = PGSolverParser.parse(rawGame)
+        val game = GrammarPGSolverParser().parse(rawGame)
 
         val partitionFIFO = SPMSolver.solve(game, PredecessorLifting(game, QueueType.FIFO))
         val partitionLIFO = SPMSolver.solve(game, PredecessorLifting(game, QueueType.LIFO))
