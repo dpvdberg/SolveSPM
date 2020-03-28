@@ -15,6 +15,7 @@ import util.QueueType
 import util.SearchMethod
 import java.util.concurrent.TimeUnit
 import com.github.ajalt.clikt.output.CliktHelpFormatter
+import com.github.ajalt.clikt.parameters.types.int
 import evaluation.lift.strategyDependencyMap
 import paritygame.Box
 import paritygame.Diamond
@@ -142,6 +143,8 @@ class SolveSPM : CliktCommand(help = "test") {
         help = "Write benchmark results for each parity game as a comma separated file"
     ).flag()
 
+    private val iterationPrint by option("-i", "--iteration", help = "Frequency to print iteration count when using verbose printing").int().default(10)
+
     private val pgParserName by option("-p", "--parser", help = "PGSolver parser").choice(
         PGSolverParserNames.values().associateBy { m -> m.name },
         ignoreCase = true
@@ -150,6 +153,7 @@ class SolveSPM : CliktCommand(help = "test") {
     companion object {
         var verbose = false
         var veryVerbose = false
+        var iterationPrint = 0
 
         var benchmarkIterations = 0
     }
@@ -157,6 +161,7 @@ class SolveSPM : CliktCommand(help = "test") {
     override fun run() {
         SolveSPM.verbose = verbose || veryVerbose
         SolveSPM.veryVerbose = veryVerbose
+        SolveSPM.iterationPrint = iterationPrint
 
         if (!benchmark && (writecsv ||  printcsv)) {
             println("The write and print csv flags only apply for benchmarks".red())

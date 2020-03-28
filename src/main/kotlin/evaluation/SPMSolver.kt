@@ -33,9 +33,13 @@ class SPMSolver {
                     .getSequence(progressMeasure)
                     .firstOrNull { n -> progressMeasure.g.getValue(n) < lift(game.max, progressMeasure, n) }
 
-                printlnv("Iteration: $iteration")
-                printlnvv(progressMeasure)
-                printlnvv("")
+                if (SolveSPM.verbose) {
+                    if (iteration % SolveSPM.iterationPrint == 0) {
+                        printlnv("Iteration: $iteration")
+                    }
+                    printlnvv(progressMeasure)
+                    printlnvv("")
+                }
 
                 if (next != null) {
                     progressMeasure.g[next] = lift(game.max, progressMeasure, next)
