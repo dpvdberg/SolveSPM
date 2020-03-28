@@ -81,12 +81,6 @@ internal class GameTest {
 
         val game = GrammarPGSolverParser().parse(rawGame)
 
-        assertEquals(game.getEdgesBFS().count(), 12)
-
-        val (a, b) = game.getEdgesBFS().last()
-        assert(a.id == 4 && b.id == 4)
-
-        val (c, d) = game.getEdgesBFS().elementAt(2)
-        assert(c.id == 2 && d.id == 3)
+        assertEquals(game.getEdges().count(), 12)
     }
 }
