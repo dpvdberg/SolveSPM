@@ -12,25 +12,17 @@ class SimplePGSolverParser : PGSolverParser() {
             lines = lines.drop(1)
         }
 
-        val nodeMap: MutableMap<Int, Node> = mutableMapOf()
-        val predecessorMap = mutableMapOf<Int, MutableList<Node>>()
-            .withDefault { mutableListOf() }
-
         val nodes = lines
             .filter { l -> l.isNotEmpty() }
-            .map { l -> parseLineToNode(l, nodeMap, predecessorMap) }
+            .map { l -> parseLineToNode(l) }
             .toList()
         val game = Game(nodes, parityId)
 
-        setNodes(game, nodeMap, predecessorMap)
+        setDescendantInfo(game)
         return game
     }
 
-    private fun parseLineToNode(
-        l: String,
-        nodeMap: MutableMap<Int, Node>,
-        predecessorMap: MutableMap<Int, MutableList<Node>>
-    ): Node {
+    private fun parseLineToNode(l: String): Node {
         val split = l.trim(';').split(' ')
         val node = Node(
             split[0].toInt(),
@@ -41,8 +33,8 @@ class SimplePGSolverParser : PGSolverParser() {
             split[3].split(',').map { n -> n.toInt() },
             split.getOrNull(4)?.trim('"')
         )
-        nodeMap[node.id] = node
-        node.successorsIds.forEach { s -> predecessorMap.getValue(s).add(node) }
+
+        storeDescendantInfo(node)
 
         return node
     }

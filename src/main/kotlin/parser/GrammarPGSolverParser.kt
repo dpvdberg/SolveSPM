@@ -13,7 +13,7 @@ class GrammarPGSolverParser : PGSolverParser() {
         val lexer = ParityGameLexer(CharStreams.fromString(data))
         val tokens = CommonTokenStream(lexer)
         val parser = ParityGameParser(tokens)
-        val visitor = GameVisitor()
+        val visitor = GameVisitor(this::storeDescendantInfo)
 
         val parityGame = visitor.visit(parser.game()) as Game
 
@@ -21,8 +21,7 @@ class GrammarPGSolverParser : PGSolverParser() {
             throw ParsingException("Syntax error during the parsing of parity game: $data")
         }
 
-        // TODO: Fix dit hier
-        setNodes(parityGame, nodeMap, predecessorMap)
+        setDescendantInfo(parityGame)
         return parityGame
     }
 }

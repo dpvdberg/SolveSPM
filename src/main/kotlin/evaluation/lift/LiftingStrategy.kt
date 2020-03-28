@@ -3,12 +3,24 @@ package evaluation.lift
 import evaluation.ProgressMeasure
 import paritygame.Node
 
-interface LiftingStrategy {
+abstract class LiftingStrategy {
+    private var progressMeasure = ProgressMeasure(0)
+
     fun getSequence(pm: ProgressMeasure) = generateSequence {
         (getNext(pm)).takeIf { it != null }
     }
 
-    fun getNext(pm : ProgressMeasure) : Node?
+    abstract fun getNext(pm : ProgressMeasure) : Node?
 
-    fun setLifted(node : Node, pm : ProgressMeasure)
+    abstract fun setLifted(node : Node, pm : ProgressMeasure)
+
+    internal fun setProgressMeasure(pm: ProgressMeasure) {
+        this.progressMeasure = pm
+    }
+
+    internal fun getProgressMeasure() : ProgressMeasure {
+        return this.progressMeasure
+    }
+
+    open fun initialize() {}
 }

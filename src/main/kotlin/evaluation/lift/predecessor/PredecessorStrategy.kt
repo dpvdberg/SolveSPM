@@ -5,7 +5,7 @@ import evaluation.ProgressMeasure
 import evaluation.lift.LiftingStrategy
 import paritygame.Node
 
-abstract class PredecessorStrategy : LiftingStrategy {
+abstract class PredecessorStrategy : LiftingStrategy() {
     override fun getNext(pm : ProgressMeasure) : Node? {
         if (emptyPending()) {
             return null

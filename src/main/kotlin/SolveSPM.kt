@@ -176,7 +176,7 @@ class SolveSPM : CliktCommand(help = "test") {
 
     private fun solveFile(file: File) {
         println("Reading parity game file: ${file.name}")
-        val game = pgParserName.parser.parse(file.readText())
+        val game = pgParserName.parser().parse(file.readText())
 
         println("Successfully parsed parity game file.")
         printlnv(game)
@@ -225,7 +225,8 @@ class SolveSPM : CliktCommand(help = "test") {
 
     private fun benchmark(game: Game, file: File) {
         val factory = LiftingStrategyFactory()
-        val lines = StringBuilder("Method,ElapsedNs,Iterations,Diamond,Box")
+        val lines = StringBuilder()
+        lines.appendln("Method,ElapsedNs,Iterations,Diamond,Box")
         if (printcsv) {
             println(lines)
         }
@@ -257,7 +258,9 @@ class SolveSPM : CliktCommand(help = "test") {
         }
 
         if (writecsv) {
-            File(file.parentFile, "${file.nameWithoutExtension}_result.csv").writeText(lines.toString())
+            val dir = File(file.parentFile, "results")
+            dir.mkdirs()
+            File(dir, "${file.nameWithoutExtension}_result.csv").writeText(lines.toString())
         }
     }
 

@@ -4,7 +4,8 @@ import paritygame.*
 import parser.grammar.ParityGameBaseVisitor
 import parser.grammar.ParityGameParser
 
-class GameVisitor : ParityGameBaseVisitor<Any>() {
+class GameVisitor(val nodeCallback : (n : Node) -> Unit) : ParityGameBaseVisitor<Any>() {
+
     override fun visitGame(ctx: ParityGameParser.GameContext?): Game {
         return Game(
             // Reverse distinctBy on id, to keep last with that id
@@ -19,7 +20,7 @@ class GameVisitor : ParityGameBaseVisitor<Any>() {
     }
 
     override fun visitNode(ctx: ParityGameParser.NodeContext?): Node {
-        return Node(
+        val node = Node(
             ctx!!.id.text.toInt(),
             ctx.priority.text.toInt(),
             this.visit(ctx.player()) as Player,
@@ -28,6 +29,9 @@ class GameVisitor : ParityGameBaseVisitor<Any>() {
             this.visit(ctx.successors()) as List<Int>,
             ctx.name?.text?.trim('"')
             )
+
+        nodeCallback(node)
+        return node
     }
 
     override fun visitPlayer(ctx: ParityGameParser.PlayerContext?): Player {

@@ -2,6 +2,7 @@ package paritygame
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import parser.GrammarPGSolverParser
 import parser.PGSolverParser
 import util.SearchMethod
 
@@ -19,7 +20,7 @@ internal class GameTest {
             6 3 0 6,5 "W";
         """.trimIndent()
 
-        val game = PGSolverParser.parse(rawGame)
+        val game = GrammarPGSolverParser().parse(rawGame)
 
         assertEquals(game.startingNode.id, 0)
     }
@@ -36,7 +37,7 @@ internal class GameTest {
             6 3 0 6,5 "W";
         """.trimIndent()
 
-        val game = PGSolverParser.parse(rawGame)
+        val game = GrammarPGSolverParser().parse(rawGame)
 
         assertEquals(game.getNodes(SearchMethod.DFS).count(), game.nodes.size)
 
@@ -57,7 +58,7 @@ internal class GameTest {
             6 3 0 6,5 "W";
         """.trimIndent()
 
-        val game = PGSolverParser.parse(rawGame)
+        val game = GrammarPGSolverParser().parse(rawGame)
 
         assertEquals(game.getNodes(SearchMethod.BFS).count(), game.nodes.size)
 
@@ -78,7 +79,7 @@ internal class GameTest {
             6 3 0 6,5 "W";
         """.trimIndent()
 
-        val game = PGSolverParser.parse(rawGame)
+        val game = GrammarPGSolverParser().parse(rawGame)
 
         assertEquals(game.getEdgesBFS().count(), 12)
 

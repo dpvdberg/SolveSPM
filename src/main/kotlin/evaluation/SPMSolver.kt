@@ -23,6 +23,8 @@ class SPMSolver {
 
         private fun computeProgressMeasure(game: Game, liftingStrategy: LiftingStrategy): ProgressMeasure {
             val progressMeasure = ProgressMeasure(game.maxPriority + 1)
+            liftingStrategy.setProgressMeasure(progressMeasure)
+            liftingStrategy.initialize()
 
             var iteration = 0
 

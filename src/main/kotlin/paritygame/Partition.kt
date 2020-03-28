@@ -12,7 +12,7 @@ class Partition(private val diamondSet : Set<Node>, private val boxSet : Set<Nod
 
     override fun toString(): String =
         """
-            Diamond (<>) : ${diamondSet.map{n -> n.id}.sorted().toList()}
-            Box ([]) :     ${boxSet.map{n -> n.id}.sorted().toList()}
+            Diamond (<>) : ${diamondSet.size} nodes -> ${diamondSet.map{n -> n.id}.sorted().toList()}
+            Box ([]) : ${boxSet.size} nodes -> ${boxSet.map{n -> n.id}.sorted().toList()}
         """.trimIndent()
 }

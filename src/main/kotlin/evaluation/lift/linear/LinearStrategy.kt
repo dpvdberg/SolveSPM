@@ -5,7 +5,7 @@ import evaluation.lift.LiftingStrategy
 import paritygame.Game
 import paritygame.Node
 
-abstract class LinearStrategy(val game: Game) : LiftingStrategy {
+abstract class LinearStrategy(val game: Game) : LiftingStrategy() {
     private var nonLiftedFetchedNodes = 0
 
     abstract fun fetchNextNode(): Node

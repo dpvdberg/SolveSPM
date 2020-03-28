@@ -1,45 +1,35 @@
 package evaluation.lift.predecessor
 
+import datastructure.MaxHeap
 import evaluation.Loss
-import evaluation.Measure
 import evaluation.ProgressMeasure
+import evaluation.ProgressMeasureNodeComparator
 import paritygame.Game
 import paritygame.Node
 import util.MinMax
 
-class MetricLifting(val game: Game, private val metric : MinMax) : PredecessorStrategy() {
-    private val pending = game.nodes.toMutableSet()
+class MetricLifting(val game: Game, private val metric: MinMax) : PredecessorStrategy() {
+    // To be initialized
+    private var pending: MaxHeap<Node>? = null
 
-    private fun nodeValue(node : Node, pm : ProgressMeasure) : Measure {
-        return node.successors.map{s -> pm.g.getValue(s)}.max()!!
+    override fun initialize() {
+        pending = MaxHeap(game.nodes.size, ProgressMeasureNodeComparator(this.getProgressMeasure(), metric))
+        game.nodes.forEach { n -> pending?.insert(n) }
     }
 
     override fun addPendingNode(node: Node) {
-        pending.add(node)
+        pending?.insert(node)
     }
 
     override fun isPending(node: Node): Boolean {
-        return pending.contains(node)
+        return pending!!.contains(node)
     }
 
-    override fun removePending(pm : ProgressMeasure): Node {
-        val node : Node
-        when (metric) {
-           MinMax.MAX -> {
-               node = pending.filter { n -> pm.g.getValue(n) !is Loss }
-               .maxBy { n -> nodeValue(n, pm) }!!
-           }
-            MinMax.MIN -> {
-                node = pending.filter { n -> pm.g.getValue(n) !is Loss }
-                    .minBy { n -> nodeValue(n, pm) }!!
-            }
-        }
-
-        pending.remove(node)
-        return node
+    override fun removePending(pm: ProgressMeasure): Node {
+        return pending!!.extract()
     }
 
     override fun emptyPending(): Boolean {
-        return pending.isEmpty()
+        return pending!!.isEmpty
     }
 }
