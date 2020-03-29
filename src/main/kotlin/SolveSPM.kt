@@ -15,13 +15,14 @@ import util.QueueType
 import util.SearchMethod
 import java.util.concurrent.TimeUnit
 import com.github.ajalt.clikt.output.CliktHelpFormatter
+import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.types.int
-import evaluation.lift.strategyDependencyMap
 import paritygame.Box
 import paritygame.Diamond
 import paritygame.Game
 import parser.PGSolverParserNames
 import java.io.File
+import kotlin.random.Random
 
 fun main(args: Array<String>) = SolveSPM().main(args)
 
@@ -68,10 +69,10 @@ class SolveSPM : CliktCommand(help = "test") {
         context { helpFormatter = CliktHelpFormatter(showRequiredTag = true, showDefaultValues = true) }
     }
 
-    private val liftingStrategyName by option("-m", "--method", help = "Lifting method used").choice(
+    private val liftingStrategyNames by option("-s", "--strategy", help = "Lifting strategy used").choice(
         StrategyName.map,
         ignoreCase = true
-    ).default(StrategyName.METRIC)
+    ).multiple()
 
     private val pgFile by argument(
         "Path",
@@ -119,6 +120,16 @@ class SolveSPM : CliktCommand(help = "test") {
         ignoreCase = true
     ).default(MinMax.MAX)
 
+    private val randomSeed by option(
+        "-rs", "--randomseed",
+        help = "Fixed seed used in the '${StrategyName.RANDOM.fancyName}' lifting method, default random is used when not specified."
+    ).int()
+
+    private val seedCount by option(
+        "-ra", "--randomattempts",
+        help = "Number of random seeds to try in the '${StrategyName.RANDOM.fancyName}' lifting method.\nCannot be used with the '--randomseed' option"
+    ).int().default(1)
+
     private val timer by option(
         "-t",
         "--timer",
@@ -128,7 +139,11 @@ class SolveSPM : CliktCommand(help = "test") {
     private val benchmark by option(
         "-b",
         "--benchmark",
-        help = "Benchmark all lifting strategies for each parity game, will automatically use timer"
+        help = """
+            Benchmark all lifting strategies for each parity game, will automatically use timer.
+            When no method is specified using the '--strategy' option, all strategies are benchmarked.
+            One can also supply multiple strategies, in which case only those strategies are benchmarked.
+        """.trimIndent()
     ).flag()
 
     private val printcsv by option(
@@ -140,10 +155,14 @@ class SolveSPM : CliktCommand(help = "test") {
     private val writecsv by option(
         "-o",
         "--output",
-        help = "Write benchmark results for each parity game as a comma separated file"
+        help = "Write benchmark results for each parity game as a comma separated file in a 'results' folder"
     ).flag()
 
-    private val iterationPrint by option("-i", "--iteration", help = "Frequency to print iteration count when using verbose printing").int().default(10)
+    private val iterationPrint by option(
+        "-i",
+        "--iteration",
+        help = "Frequency to print iteration count when using verbose printing"
+    ).int().default(5)
 
     private val pgParserName by option("-p", "--parser", help = "PGSolver parser").choice(
         PGSolverParserNames.values().associateBy { m -> m.name },
@@ -163,7 +182,7 @@ class SolveSPM : CliktCommand(help = "test") {
         SolveSPM.veryVerbose = veryVerbose
         SolveSPM.iterationPrint = iterationPrint
 
-        if (!benchmark && (writecsv ||  printcsv)) {
+        if (!benchmark && (writecsv || printcsv)) {
             println("The write and print csv flags only apply for benchmarks".red())
             return
         }
@@ -192,11 +211,26 @@ class SolveSPM : CliktCommand(help = "test") {
         if (benchmark) {
             printlnv("Starting benchmark")
 
-            benchmark(game, file)
+            benchmark(game, file, liftingStrategyNames)
             return
         }
 
-        println("Using lifting strategy: $liftingStrategyName")
+        liftingStrategyNames.forEach { l -> runStrategy(game, l, randomSeed) }
+    }
+
+    private fun createSeeds() = (0 until seedCount).map { Random.Default.nextInt() }.toList()
+
+    private fun runStrategy(
+        game: Game,
+        liftingStrategyName: StrategyName,
+        seed: Int?
+    ) {
+        if (seed == null && liftingStrategyName == StrategyName.RANDOM && seedCount > 1) {
+            val seeds = createSeeds()
+            printlnv("Created seeds: $seeds")
+            seeds.forEach { s -> runStrategy(game, liftingStrategyName, s) }
+            return
+        }
 
         val factory = LiftingStrategyFactory()
         val liftingStrategy = factory.createLiftingStrategy(
@@ -204,7 +238,8 @@ class SolveSPM : CliktCommand(help = "test") {
             game,
             searchMethod,
             queueType,
-            minMax
+            minMax,
+            seed
         )
 
         printlnv("Successfully instantiated lifting strategy.")
@@ -228,37 +263,47 @@ class SolveSPM : CliktCommand(help = "test") {
         println()
     }
 
-    private fun benchmark(game: Game, file: File) {
+    private fun benchmark(
+        game: Game,
+        file: File,
+        liftingStrategyNames: List<StrategyName>
+    ) {
         val factory = LiftingStrategyFactory()
         val lines = StringBuilder()
         lines.appendln("Method,ElapsedNs,Iterations,Diamond,Box")
         if (printcsv) {
             println(lines)
         }
-        for (method in StrategyName.values()) {
-            if (method in strategyDependencyMap) {
-                val dependencies = strategyDependencyMap[method]
-                printlnvv("Lifting strategy $method depends on $strategyDependencyMap")
+        val liftingStrategies =
+            if (liftingStrategyNames.isEmpty()) StrategyName.values().toList() else liftingStrategyNames
+        println("Running ${liftingStrategies.size} strategies: $liftingStrategies.")
 
-                when (dependencies?.get(0)) {
-                    is MinMax -> {
-                        dependencies.forEach { z ->
-                            lines.appendln(benchmarkSingle(factory, game, method, null, null, z as MinMax))
-                        }
-                    }
-                    is QueueType -> {
-                        dependencies.forEach { z ->
-                            lines.appendln(benchmarkSingle(factory, game, method, null, z as QueueType, null))
-                        }
-                    }
-                    is SearchMethod -> {
-                        dependencies.forEach { z ->
-                            lines.appendln(benchmarkSingle(factory, game, method, z as SearchMethod, null, null))
-                        }
+        val seeds = createSeeds()
+
+        for (strategy in liftingStrategies) {
+            when (strategy) {
+                StrategyName.METRIC -> {
+                    MinMax.values().forEach { z ->
+                        lines.appendln(benchmarkSingle(factory, game, strategy, null, null, z, null))
                     }
                 }
-            } else {
-                lines.appendln(benchmarkSingle(factory, game, method, null, null, null))
+                StrategyName.PERMUTATION_IDORDER -> {
+                    SearchMethod.values().forEach { z ->
+                        lines.appendln(benchmarkSingle(factory, game, strategy, z, null, null, null))
+                    }
+                }
+                StrategyName.PREDECESSOR -> {
+                    QueueType.values().forEach { z ->
+                        lines.appendln(benchmarkSingle(factory, game, strategy, null, z, null, null))
+                    }
+                }
+                StrategyName.RANDOM -> {
+                    seeds.forEach { z ->
+                        lines.appendln(benchmarkSingle(factory, game, strategy, null, null, null, z))
+                    }
+                }
+                else ->
+                    lines.appendln(benchmarkSingle(factory, game, strategy, null, null, null, null))
             }
         }
 
@@ -275,14 +320,16 @@ class SolveSPM : CliktCommand(help = "test") {
         liftingStrategyName: StrategyName,
         searchMethod: SearchMethod?,
         queueType: QueueType?,
-        minMax: MinMax?
+        minMax: MinMax?,
+        seed: Int?
     ): String {
         val liftingStrategy = factory.createLiftingStrategy(
             liftingStrategyName,
             game,
             searchMethod,
             queueType,
-            minMax
+            minMax,
+            seed
         )
         benchmarkIterations = 0
 

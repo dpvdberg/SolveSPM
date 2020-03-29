@@ -10,7 +10,8 @@ enum class StrategyName(val fancyName : String) {
     OPTIMIZED_IDORDER("id_optimized"),
     PERMUTATION_IDORDER("id_permutation"),
     PREDECESSOR("predecessor"),
-    METRIC("metric");
+    METRIC("metric"),
+    RANDOM("random");
 
     companion object {
         val map = values().associate { s -> s.fancyName to s }

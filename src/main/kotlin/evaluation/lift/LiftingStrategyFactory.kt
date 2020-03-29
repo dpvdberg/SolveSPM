@@ -1,9 +1,6 @@
 package evaluation.lift
 
-import evaluation.lift.linear.IdOrderLifting
-import evaluation.lift.linear.OptimizedIdOrderLifting
-import evaluation.lift.linear.PermutationIdOrderLifting
-import evaluation.lift.linear.ReverseIdOrderLifting
+import evaluation.lift.linear.*
 import evaluation.lift.predecessor.MetricLifting
 import evaluation.lift.predecessor.PredecessorLifting
 import paritygame.Game
@@ -13,11 +10,13 @@ import util.SearchMethod
 
 class LiftingStrategyFactory {
     fun createLiftingStrategy(
-        name : StrategyName,
-        game : Game,
+        name: StrategyName,
+        game: Game,
         searchMethod: SearchMethod? = null,
         queueType: QueueType? = null,
-        minMax : MinMax? = null) : LiftingStrategy {
+        minMax: MinMax? = null,
+        seed: Int?
+    ): LiftingStrategy {
         return when (name) {
             StrategyName.IDORDER ->
                 IdOrderLifting(game)
@@ -26,11 +25,15 @@ class LiftingStrategyFactory {
             StrategyName.OPTIMIZED_IDORDER ->
                 OptimizedIdOrderLifting(game)
             StrategyName.PERMUTATION_IDORDER ->
-                PermutationIdOrderLifting(game, searchMethod ?: throw IllegalArgumentException("Search method expected"))
+                PermutationIdOrderLifting(
+                    game,
+                    searchMethod ?: throw IllegalArgumentException("Search method expected")
+                )
             StrategyName.PREDECESSOR ->
                 PredecessorLifting(game, queueType ?: throw IllegalArgumentException("Queue type expected"))
             StrategyName.METRIC ->
                 MetricLifting(game, minMax ?: throw IllegalArgumentException("Min or max expected"))
+            StrategyName.RANDOM -> RandomOrderLifting(game, seed)
         }
     }
 }
