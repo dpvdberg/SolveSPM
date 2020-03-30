@@ -158,6 +158,12 @@ class SolveSPM : CliktCommand(help = "test") {
         help = "Write benchmark results for each parity game as a comma separated file in a 'results' folder"
     ).flag()
 
+    private val pipeSeparator by option(
+        "-pipe",
+        "--pipeseparator",
+        help = "Use a pipe as a separator in all csv output."
+    ).flag()
+
     private val includeParition by option(
         "-ip",
         "--includepartition",
@@ -174,6 +180,9 @@ class SolveSPM : CliktCommand(help = "test") {
         PGSolverParserNames.values().associateBy { m -> m.name },
         ignoreCase = true
     ).default(PGSolverParserNames.SIMPLE)
+
+
+    private val separator by lazy { if (pipeSeparator) '|' else ',' }
 
     companion object {
         var verbose = false
@@ -276,10 +285,10 @@ class SolveSPM : CliktCommand(help = "test") {
     ) {
         val factory = LiftingStrategyFactory()
         val lines = StringBuilder()
-        var header = "Method,ElapsedNs,Iterations,Diamond,Box"
+        var header = "Method${separator}ElapsedNs${separator}Iterations${separator}Diamond${separator}Box"
 
         if (includeParition) {
-            header += ",DiamondSet,BoxSet"
+            header += "${separator}DiamondSet${separator}BoxSet"
         }
         lines.appendln(header)
 
@@ -349,10 +358,10 @@ class SolveSPM : CliktCommand(help = "test") {
         val fullName = "$liftingStrategyName ${searchMethod ?: ""}${queueType ?: ""}${minMax ?: ""}".trim()
 
         var csvline =
-            "$fullName,$elapsedNs,$benchmarkIterations,${partition.getSet(Diamond).size},${partition.getSet(Box).size}"
+            "$fullName$separator$elapsedNs$separator$benchmarkIterations$separator${partition.getSet(Diamond).size}$separator${partition.getSet(Box).size}"
 
         if (includeParition) {
-            csvline += ",${partition.getSetString(Diamond)},${partition.getSetString(Box)}"
+            csvline += "$separator${partition.getSetString(Diamond)}$separator${partition.getSetString(Box)}"
         }
 
         if (printcsv) {

@@ -41,11 +41,6 @@ class strategies(Enum):
     METRIC = 'METRIC'
     RANDOM = 'RANDOM'
 
-
-excluded_strategies = [strategies.RANDOM]
-
-excluded_strategies = [s.name for s in excluded_strategies]
-
 result_dict = {}
 
 currentIndex = startindex
@@ -60,10 +55,9 @@ while os.path.isfile(get_result_file(currentIndex)):
 
 file_indices = list(result_dict.keys())
 results = list(result_dict.values())
-strategies = [r for r in [r.strategy for r in results[0]] if r not in excluded_strategies]
 
-file_strategy_map = {
-    i: {s: next(r for r in result_dict[i] if r.strategy == s) for s in strategies} for i in file_indices
+file_map = {
+    i: [r for r in result_dict[i] if r.strategy == strategies.RANDOM.value] for i in file_indices
 }
 
 timedir = os.path.join(outdir, 'time')
@@ -79,13 +73,10 @@ styles = ['s', 'o', 'p', 'd', 'd', 'p', 'p', 'x', 'x']
 ## PLOT TIME
 
 fig, ax = plt.subplots()
-i = 0
-for s in strategies:
-    ax.plot(file_indices, [ns_to_s(file_strategy_map[i][s].elapsedNs) for i in file_indices],
-            marker=styles[i], label=s,
-            markersize=7
-            )
-    i = i + 1
+ax.plot(file_indices, [ns_to_s(file_map[i].elapsedNs) for i in file_indices],
+        marker='o', label=s,
+        markersize=7
+        )
 
 ax.legend()
 ax.set_ylabel('Time (seconds)')
