@@ -158,6 +158,12 @@ class SolveSPM : CliktCommand(help = "test") {
         help = "Write benchmark results for each parity game as a comma separated file in a 'results' folder"
     ).flag()
 
+    private val includeParition by option(
+        "-ip",
+        "--includepartition",
+        help = "Include the set partition results for each parity game"
+    ).flag()
+
     private val iterationPrint by option(
         "-i",
         "--iteration",
@@ -270,7 +276,13 @@ class SolveSPM : CliktCommand(help = "test") {
     ) {
         val factory = LiftingStrategyFactory()
         val lines = StringBuilder()
-        lines.appendln("Method,ElapsedNs,Iterations,Diamond,Box")
+        var header = "Method,ElapsedNs,Iterations,Diamond,Box"
+
+        if (includeParition) {
+            header += ",DiamondSet,BoxSet"
+        }
+        lines.appendln()
+
         if (printcsv) {
             println(lines)
         }
@@ -336,8 +348,13 @@ class SolveSPM : CliktCommand(help = "test") {
         val (partition, elapsedNs) = SPMSolver.solveTimed(game, liftingStrategy)
         val fullName = "$liftingStrategyName ${searchMethod ?: ""}${queueType ?: ""}${minMax ?: ""}".trim()
 
-        val csvline =
+        var csvline =
             "$fullName,$elapsedNs,$benchmarkIterations,${partition.getSet(Diamond).size},${partition.getSet(Box).size}"
+
+        if (includeParition) {
+            csvline += ",${partition.getSetString(Diamond)},${partition.getSetString(Box)}"
+        }
+
         if (printcsv) {
             println(csvline)
         } else {
