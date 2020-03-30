@@ -4,8 +4,8 @@ import csv
 import os
 
 setname = "Dining"
-resultdir = "../test/resources/games/dining/resultsSave"
-filetemplate = "dining_{}.invariantly_inevitably_eat_result.csv"
+resultdir = "../test/resources/games/cpp/results"
+filetemplate = "german_linear_{}.infinite_run_no_access_result.csv"
 startindex = 2
 outdir = "out"
 

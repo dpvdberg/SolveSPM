@@ -281,7 +281,7 @@ class SolveSPM : CliktCommand(help = "test") {
         if (includeParition) {
             header += ",DiamondSet,BoxSet"
         }
-        lines.appendln()
+        lines.appendln(header)
 
         if (printcsv) {
             println(lines)
