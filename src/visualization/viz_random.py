@@ -73,10 +73,8 @@ styles = ['s', 'o', 'p', 'd', 'd', 'p', 'p', 'x', 'x']
 ## PLOT TIME
 
 fig, ax = plt.subplots()
-ax.plot(file_indices, [ns_to_s(file_map[i].elapsedNs) for i in file_indices],
-        marker='o', label=s,
-        markersize=7
-        )
+plt.scatter([2, 3], [5, 5])
+plt.scatter([2, 3], [6, 6])
 
 ax.legend()
 ax.set_ylabel('Time (seconds)')
@@ -89,26 +87,3 @@ plt.grid(True)
 fig.show()
 
 fig.savefig(os.path.join(timedir, deducedShortName + ".pdf"), bbox_inches='tight')
-
-## PLOT ITERATION
-
-fig, ax = plt.subplots()
-i = 0
-for s in strategies:
-    ax.plot(file_indices, [file_strategy_map[i][s].iterations for i in file_indices],
-            marker=styles[i], label=s,
-            markersize=7
-            )
-    i = i + 1
-
-ax.legend()
-ax.set_ylabel('Iteration count')
-ax.set_xlabel('Game index')
-ax.set_xticks(file_indices)
-plt.title("Iteration count for '" + setname + "' problem set" + "\nParity Game: " + deducedShortName)
-# plt.yscale('log')
-plt.grid(True)
-
-fig.show()
-
-fig.savefig(os.path.join(iterationdir, deducedShortName + ".pdf"), bbox_inches='tight')
