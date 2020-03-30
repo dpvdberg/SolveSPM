@@ -16,5 +16,11 @@ class Partition(private val diamondSet : Set<Node>, private val boxSet : Set<Nod
             Box ([]) : ${boxSet.size} nodes -> ${getSetString(Box)}
         """.trimIndent()
 
-    fun getSetString(player: Player) = getSet(player).map{n -> n.id}.sorted().toList()
+    fun getSetString(player: Player) = getSet(player)
+        .map{n -> n.id}
+        .sorted()
+        .toList()
+        .toString()
+        .replace('[', '{')
+        .replace(']', '}')
 }
