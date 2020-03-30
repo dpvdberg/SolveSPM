@@ -400,8 +400,7 @@ class SolveSPM : CliktCommand(help = "test") {
         benchmarkIterations = 0
 
         var (partition, elapsedNs) = SPMSolver.solveTimed(game, liftingStrategy)
-        if (isFirstRun && rerunFirst) {
-            isFirstRun = false
+        if (rerunFirst) {
             val (partitionRerun, elapsedNsRerun) = SPMSolver.solveTimed(game, liftingStrategy)
             partition = partitionRerun
             elapsedNs = elapsedNsRerun
