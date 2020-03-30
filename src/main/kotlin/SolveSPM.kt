@@ -405,7 +405,7 @@ class SolveSPM : CliktCommand(help = "test") {
             csvline = csvline
                 .replace("}", "\\}")
                 .replace("{", "\\{")
-                .replace("_", "\\_")
+                .replace("_", " ")
         }
 
         if (printcsv) {
