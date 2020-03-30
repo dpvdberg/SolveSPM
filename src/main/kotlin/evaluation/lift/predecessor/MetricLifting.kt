@@ -17,6 +17,10 @@ class MetricLifting(val game: Game, private val metric: MinMax) : PredecessorStr
         game.nodes.forEach { n -> pending?.insert(n) }
     }
 
+    override fun updatePredecessorPriority(w: Node) {
+        pending?.heapify(w)
+    }
+
     override fun addPendingNode(node: Node) {
         pending?.insert(node)
     }

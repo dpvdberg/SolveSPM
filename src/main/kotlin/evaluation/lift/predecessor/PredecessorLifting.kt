@@ -11,7 +11,6 @@ import java.util.*
 
 class PredecessorLifting(game: Game, private val type : QueueType) : PredecessorStrategy() {
     private val pending = ArrayDeque(game.nodes)
-
     override fun addPendingNode(node: Node) {
         pending.addToQueue(node, type)
     }
@@ -21,4 +20,8 @@ class PredecessorLifting(game: Game, private val type : QueueType) : Predecessor
     override fun removePending(pm : ProgressMeasure): Node = pending.remove()
 
     override fun emptyPending(): Boolean = pending.isEmpty()
+
+    override fun updatePredecessorPriority(w: Node) {
+        // nothing to do
+    }
 }
