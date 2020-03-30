@@ -389,7 +389,7 @@ class SolveSPM : CliktCommand(help = "test") {
         minMax: MinMax?,
         seed: Int?
     ): String {
-        val liftingStrategy = factory.createLiftingStrategy(
+        var liftingStrategy = factory.createLiftingStrategy(
             liftingStrategyName,
             game,
             searchMethod,
@@ -400,7 +400,18 @@ class SolveSPM : CliktCommand(help = "test") {
         benchmarkIterations = 0
 
         var (partition, elapsedNs) = SPMSolver.solveTimed(game, liftingStrategy)
-        if (rerunFirst) {
+        if (isFirstRun && rerunFirst) {
+            isFirstRun = false
+            benchmarkIterations = 0
+            liftingStrategy = factory.createLiftingStrategy(
+                liftingStrategyName,
+                game,
+                searchMethod,
+                queueType,
+                minMax,
+                seed
+            )
+
             val (partitionRerun, elapsedNsRerun) = SPMSolver.solveTimed(game, liftingStrategy)
             partition = partitionRerun
             elapsedNs = elapsedNsRerun
