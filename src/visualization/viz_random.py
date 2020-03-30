@@ -7,10 +7,10 @@ import seaborn as sns
 import pandas as pd
 import ntpath
 
-setname = "Dining philosophers"
-resultdir = "../test/resources/games/dining/resultsRandom"
-prefix = "dining_"
-indices = [2, 3, 4, 5, 6, 7]
+setname = "Elevator2"
+resultdir = "../test/resources/games/elevator/resultsRandom"
+prefix = "elevator2_"
+indices = [2, 3, 4, 5]
 
 startindex = indices[0]
 outdir = "out"
@@ -31,6 +31,9 @@ for filetemplate in filetemplates:
     for index in indices:
         thisoutdir = os.path.join(outdir, setname)
         deducedShortName = filetemplate[(filetemplate.index('}') + 2):][:-11]
+
+        if deducedShortName == '':
+            deducedShortName = setname
 
         if not os.path.exists(thisoutdir):
             os.makedirs(thisoutdir)
@@ -148,6 +151,9 @@ for filetemplate in filetemplates:
 for filetemplate in filetemplates:
     thisoutdir = os.path.join(outdir, setname)
     deducedShortName = filetemplate[(filetemplate.index('}') + 2):][:-11]
+
+    if deducedShortName == '':
+        deducedShortName = setname
 
     if not os.path.exists(thisoutdir):
         os.makedirs(thisoutdir)

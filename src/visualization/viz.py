@@ -5,9 +5,9 @@ import csv
 import os
 import ntpath
 
-setname = "Elevator2"
-resultdir = "../test/resources/games/elevator/results"
-prefix = "elevator2_"
+setname = "Dining philosophers"
+resultdir = "../test/resources/games/dining/results"
+prefix = "dining_"
 startindex = 2
 outdir = "out"
 
@@ -27,6 +27,9 @@ filetemplates = deduce_file_templates()
 for filetemplate in filetemplates:
     thisoutdir = os.path.join(outdir, setname)
     deducedShortName = filetemplate[(filetemplate.index('}') + 2):][:-11]
+
+    if deducedShortName == '':
+        deducedShortName = setname
 
     if not os.path.exists(thisoutdir):
         os.makedirs(thisoutdir)
