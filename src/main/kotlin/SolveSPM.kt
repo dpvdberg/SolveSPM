@@ -170,6 +170,16 @@ class SolveSPM : CliktCommand(help = "test") {
         help = "Escape brackets and underscore in csv output"
     ).flag()
 
+    private val timeUnit by option("-tu", "--timeunit", help = "Time unit used in the csv output").choice(
+        mapOf(
+            "nanoseconds" to TimeUnit.NANOSECONDS,
+            "milliseconds" to TimeUnit.MILLISECONDS,
+            "seconds" to TimeUnit.SECONDS,
+            "minutes" to TimeUnit.MINUTES
+            ),
+        ignoreCase = true
+    ).default(TimeUnit.NANOSECONDS)
+
     private val includeParition by option(
         "-ip",
         "--includepartition",
@@ -189,6 +199,22 @@ class SolveSPM : CliktCommand(help = "test") {
 
 
     private val separator by lazy { if (pipeSeparator) '|' else ',' }
+
+    private val shortTimeUnitName by lazy {
+        when (timeUnit) {
+            TimeUnit.NANOSECONDS -> "ns"
+            TimeUnit.MICROSECONDS -> "micros"
+            TimeUnit.MILLISECONDS -> "ms"
+            TimeUnit.SECONDS -> "s"
+            TimeUnit.MINUTES -> "min"
+            TimeUnit.HOURS -> "h"
+            TimeUnit.DAYS -> "days"
+        }
+    }
+
+    private val elapsedName by lazy {
+        "Elapsed${shortTimeUnitName.capitalize()}"
+    }
 
     companion object {
         var verbose = false
@@ -291,7 +317,7 @@ class SolveSPM : CliktCommand(help = "test") {
     ) {
         val factory = LiftingStrategyFactory()
         val lines = StringBuilder()
-        var header = "Method${separator}ElapsedNs${separator}Iterations${separator}Diamond${separator}Box"
+        var header = "Method${separator}${elapsedName}${separator}Iterations${separator}Diamond${separator}Box"
 
         if (includeParition) {
             header += "${separator}DiamondSet${separator}BoxSet"
@@ -364,7 +390,7 @@ class SolveSPM : CliktCommand(help = "test") {
         val fullName = "$liftingStrategyName ${searchMethod ?: ""}${queueType ?: ""}${minMax ?: ""}".trim()
 
         var csvline =
-            "$fullName$separator$elapsedNs$separator$benchmarkIterations$separator${partition.getSet(Diamond).size}$separator${partition.getSet(Box).size}"
+            "$fullName$separator${timeUnit.convert(elapsedNs, TimeUnit.NANOSECONDS)}$separator$benchmarkIterations$separator${partition.getSet(Diamond).size}$separator${partition.getSet(Box).size}"
 
         if (includeParition) {
             csvline += "$separator${partition.getSetString(Diamond)}$separator${partition.getSetString(Box)}"
