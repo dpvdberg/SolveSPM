@@ -193,10 +193,10 @@ class SolveSPM : CliktCommand(help = "test") {
         help = "Frequency to print iteration count when using verbose printing"
     ).int().default(5)
 
-    private val rerunFirst by option(
-        "-rrf",
-        "--rerunfirst",
-        help = "Re-run first evaluation in the benchmark, to overcome Java caching and JIT compilation overhead."
+    private val runTwice by option(
+        "-rt",
+        "--runtwice",
+        help = "Run evaluation twice in the benchmark, to overcome Java caching and JIT compilation overhead in the first run."
     ).flag()
 
     private val pgParserName by option("-p", "--parser", help = "PGSolver parser").choice(
@@ -377,9 +377,6 @@ class SolveSPM : CliktCommand(help = "test") {
         }
     }
 
-
-    var isFirstRun = true
-
     private fun benchmarkSingle(
         factory: LiftingStrategyFactory,
         game: Game,
@@ -400,8 +397,7 @@ class SolveSPM : CliktCommand(help = "test") {
         benchmarkIterations = 0
 
         var (partition, elapsedNs) = SPMSolver.solveTimed(game, liftingStrategy)
-        if (isFirstRun && rerunFirst) {
-            isFirstRun = false
+        if (runTwice) {
             benchmarkIterations = 0
             liftingStrategy = factory.createLiftingStrategy(
                 liftingStrategyName,
