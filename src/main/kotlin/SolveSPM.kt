@@ -173,6 +173,7 @@ class SolveSPM : CliktCommand(help = "test") {
     private val timeUnit by option("-tu", "--timeunit", help = "Time unit used in the csv output").choice(
         mapOf(
             "nanoseconds" to TimeUnit.NANOSECONDS,
+            "microseconds" to TimeUnit.MICROSECONDS,
             "milliseconds" to TimeUnit.MILLISECONDS,
             "seconds" to TimeUnit.SECONDS,
             "minutes" to TimeUnit.MINUTES
@@ -180,7 +181,7 @@ class SolveSPM : CliktCommand(help = "test") {
         ignoreCase = true
     ).default(TimeUnit.NANOSECONDS)
 
-    private val includeParition by option(
+    private val includePartition by option(
         "-ip",
         "--includepartition",
         help = "Include the set partition results for each parity game"
@@ -319,7 +320,7 @@ class SolveSPM : CliktCommand(help = "test") {
         val lines = StringBuilder()
         var header = "Method${separator}${elapsedName}${separator}Iterations${separator}Diamond${separator}Box"
 
-        if (includeParition) {
+        if (includePartition) {
             header += "${separator}DiamondSet${separator}BoxSet"
         }
         lines.appendln(header)
@@ -392,7 +393,7 @@ class SolveSPM : CliktCommand(help = "test") {
         var csvline =
             "$fullName$separator${timeUnit.convert(elapsedNs, TimeUnit.NANOSECONDS)}$separator$benchmarkIterations$separator${partition.getSet(Diamond).size}$separator${partition.getSet(Box).size}"
 
-        if (includeParition) {
+        if (includePartition) {
             csvline += "$separator${partition.getSetString(Diamond)}$separator${partition.getSetString(Box)}"
         }
 
