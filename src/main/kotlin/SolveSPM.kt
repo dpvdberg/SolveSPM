@@ -193,10 +193,17 @@ class SolveSPM : CliktCommand(help = "test") {
         help = "Frequency to print iteration count when using verbose printing"
     ).int().default(5)
 
+    private val rerunFirst by option(
+        "-rrf",
+        "--rerunfirst",
+        help = "Re-run first evaluation in the benchmark, to overcome Java caching and garbage collection overhead."
+    ).flag()
+
     private val pgParserName by option("-p", "--parser", help = "PGSolver parser").choice(
         PGSolverParserNames.values().associateBy { m -> m.name },
         ignoreCase = true
     ).default(PGSolverParserNames.SIMPLE)
+
 
 
     private val separator by lazy { if (pipeSeparator) '|' else ',' }
@@ -370,6 +377,9 @@ class SolveSPM : CliktCommand(help = "test") {
         }
     }
 
+
+    var isFirstRun = true
+
     private fun benchmarkSingle(
         factory: LiftingStrategyFactory,
         game: Game,
@@ -389,7 +399,13 @@ class SolveSPM : CliktCommand(help = "test") {
         )
         benchmarkIterations = 0
 
-        val (partition, elapsedNs) = SPMSolver.solveTimed(game, liftingStrategy)
+        var (partition, elapsedNs) = SPMSolver.solveTimed(game, liftingStrategy)
+        if (isFirstRun && rerunFirst) {
+            val (partitionRerun, elapsedNsRerun) = SPMSolver.solveTimed(game, liftingStrategy)
+            partition = partitionRerun
+            elapsedNs = elapsedNsRerun
+        }
+
         val fullName = "$liftingStrategyName ${searchMethod ?: ""}${queueType ?: ""}${minMax ?: ""}".trim()
 
         var csvline =
