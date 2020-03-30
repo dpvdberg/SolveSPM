@@ -196,7 +196,7 @@ class SolveSPM : CliktCommand(help = "test") {
     private val rerunFirst by option(
         "-rrf",
         "--rerunfirst",
-        help = "Re-run first evaluation in the benchmark, to overcome Java caching and garbage collection overhead."
+        help = "Re-run first evaluation in the benchmark, to overcome Java caching and JIT compilation overhead."
     ).flag()
 
     private val pgParserName by option("-p", "--parser", help = "PGSolver parser").choice(
@@ -401,6 +401,7 @@ class SolveSPM : CliktCommand(help = "test") {
 
         var (partition, elapsedNs) = SPMSolver.solveTimed(game, liftingStrategy)
         if (isFirstRun && rerunFirst) {
+            isFirstRun = false
             val (partitionRerun, elapsedNsRerun) = SPMSolver.solveTimed(game, liftingStrategy)
             partition = partitionRerun
             elapsedNs = elapsedNsRerun
