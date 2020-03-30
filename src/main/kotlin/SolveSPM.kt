@@ -318,10 +318,12 @@ class SolveSPM : CliktCommand(help = "test") {
     ) {
         val factory = LiftingStrategyFactory()
         val lines = StringBuilder()
-        var header = "Method${separator}${elapsedName}${separator}Iterations${separator}Diamond${separator}Box"
+        var header = "Method${separator}${elapsedName}${separator}Iterations"
 
-        if (includePartition) {
-            header += "${separator}DiamondSet${separator}BoxSet"
+        header += if (includePartition) {
+            "${separator}DiamondSet${separator}BoxSet"
+        } else {
+            "${separator}Diamond${separator}Box"
         }
         lines.appendln(header)
 
@@ -391,10 +393,12 @@ class SolveSPM : CliktCommand(help = "test") {
         val fullName = "$liftingStrategyName ${searchMethod ?: ""}${queueType ?: ""}${minMax ?: ""}".trim()
 
         var csvline =
-            "$fullName$separator${timeUnit.convert(elapsedNs, TimeUnit.NANOSECONDS)}$separator$benchmarkIterations$separator${partition.getSet(Diamond).size}$separator${partition.getSet(Box).size}"
+            "$fullName$separator${timeUnit.convert(elapsedNs, TimeUnit.NANOSECONDS)}$separator$benchmarkIterations"
 
-        if (includePartition) {
-            csvline += "$separator${partition.getSetString(Diamond)}$separator${partition.getSetString(Box)}"
+        csvline += if (includePartition) {
+            "$separator${partition.getSetString(Diamond)}$separator${partition.getSetString(Box)}"
+        } else {
+            "$separator${partition.getSet(Diamond).size}$separator${partition.getSet(Box).size}"
         }
 
         if (escapeSpecialCharacters) {
