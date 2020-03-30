@@ -164,6 +164,12 @@ class SolveSPM : CliktCommand(help = "test") {
         help = "Use a pipe as a separator in all csv output."
     ).flag()
 
+    private val escapeSpecialCharacters by option(
+        "-escape",
+        "--escapecharacters",
+        help = "Escape brackets and underscore in csv output"
+    ).flag()
+
     private val includeParition by option(
         "-ip",
         "--includepartition",
@@ -362,6 +368,13 @@ class SolveSPM : CliktCommand(help = "test") {
 
         if (includeParition) {
             csvline += "$separator${partition.getSetString(Diamond)}$separator${partition.getSetString(Box)}"
+        }
+
+        if (escapeSpecialCharacters) {
+            csvline = csvline
+                .replace("}", "\\}")
+                .replace("{", "\\{")
+                .replace("_", "\\_")
         }
 
         if (printcsv) {
