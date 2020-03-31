@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit
 import com.github.ajalt.clikt.output.CliktHelpFormatter
 import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.types.int
+import evaluation.lift.LiftingStrategy
 import paritygame.Box
 import paritygame.Diamond
 import paritygame.Game
@@ -62,13 +63,14 @@ fun toHMSandMs(ns: Long): String {
     return toHMS(ns, TimeUnit.NANOSECONDS) + " (${TimeUnit.NANOSECONDS.toMillis(ns)} ms)"
 }
 
-class SolveSPM : CliktCommand(help = "test") {
+class SolveSPM : CliktCommand() {
     private val extension = ".gm"
 
     init {
         context { helpFormatter = CliktHelpFormatter(showRequiredTag = true, showDefaultValues = true) }
     }
 
+    private val defaultLiftingStrategy = StrategyName.METRIC
     private val liftingStrategyNames by option("-s", "--strategy", help = "Lifting strategy used").choice(
         StrategyName.map,
         ignoreCase = true
@@ -276,6 +278,12 @@ class SolveSPM : CliktCommand(help = "test") {
             return
         }
 
+        if (liftingStrategyNames.isEmpty()) {
+            println("No lifting strategy selected, defaulting to $defaultLiftingStrategy".red())
+            runStrategy(game, defaultLiftingStrategy, null)
+            return
+        }
+
         liftingStrategyNames.forEach { l -> runStrategy(game, l, randomSeed) }
     }
 
@@ -303,6 +311,8 @@ class SolveSPM : CliktCommand(help = "test") {
             seed
         )
 
+        benchmarkIterations = 0
+
         printlnv("Successfully instantiated lifting strategy.")
 
         println("Starting solver!")
@@ -313,6 +323,7 @@ class SolveSPM : CliktCommand(help = "test") {
 
                 println("Execution time: ${toHMSandMs(elapsedNs)}")
                 printlnv("Execution time nanoseconds: $elapsedNs")
+                println("Iteration count: $benchmarkIterations")
                 partition
             } else {
                 SPMSolver.solve(game, liftingStrategy)
