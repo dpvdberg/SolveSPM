@@ -12,6 +12,12 @@ class Partition(private val diamondSet : Set<Node>, private val boxSet : Set<Nod
 
     override fun toString(): String =
         """
+            Diamond (<>) : ${diamondSet.size} nodes
+            Box ([]) : ${boxSet.size} nodes
+        """.trimIndent()
+
+    fun toStringFull(): String =
+        """
             Diamond (<>) : ${diamondSet.size} nodes -> ${getSetString(Diamond)}
             Box ([]) : ${boxSet.size} nodes -> ${getSetString(Box)}
         """.trimIndent()

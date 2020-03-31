@@ -136,6 +136,12 @@ class SolveSPM : CliktCommand(help = "test") {
         help = "Enable a timer for the solver"
     ).flag()
 
+    private val showPartition by option(
+        "-sp",
+        "--showpartition",
+        help = "Display the full partition, i.e. all node id's for each player"
+    ).flag()
+
     private val benchmark by option(
         "-b",
         "--benchmark",
@@ -314,7 +320,11 @@ class SolveSPM : CliktCommand(help = "test") {
 
         println("SPMSolver finished.")
 
-        println(partition)
+        if (showPartition) {
+            println(partition.toStringFull())
+        } else {
+            println(partition)
+        }
         println()
     }
 
