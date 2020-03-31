@@ -300,6 +300,7 @@ class SolveSPM : CliktCommand() {
             seeds.forEach { s -> runStrategy(game, liftingStrategyName, s) }
             return
         }
+        println("Using lifting strategy: $liftingStrategyName")
 
         val factory = LiftingStrategyFactory()
         val liftingStrategy = factory.createLiftingStrategy(
